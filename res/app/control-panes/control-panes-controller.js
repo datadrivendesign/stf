@@ -57,6 +57,10 @@ module.exports =
     $scope.device = null
     $scope.control = null
 
+    console.log('$scope', $scope)
+    console.log('Setting sessionId to', $routeParams.sessionId)
+    $scope.sessionId = $routeParams.sessionId;
+
     // TODO: Move this out to Ctrl.resolve
     function getDevice (serial) {
       DeviceService.get(serial, $scope)
@@ -65,7 +69,7 @@ module.exports =
         })
         .then(function (device) {
           $scope.device = device
-          $scope.control = ControlService.create(device, device.channel)
+          $scope.control = ControlService.create(device, device.channel, $scope.sessionId)
 
           // TODO: Change title, flickers too much on Chrome
           // $rootScope.pageTitle = device.name
@@ -82,9 +86,6 @@ module.exports =
     }
 
     getDevice($routeParams.serial)
-    if ($routeParams.sessionId) {
-      alert('sessionId', $routeParams.sessionId)
-    }
 
     $scope.$watch('device.state', function (newValue, oldValue) {
       if (newValue !== oldValue) {

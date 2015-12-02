@@ -10,7 +10,7 @@ module.exports = function ControlServiceFactory(
   var controlService = {
   }
 
-  function ControlService(target, channel) {
+  function ControlService(target, channel, sessionId) {
     function sendOneWay(action, data) {
       socket.emit(action, channel, data)
     }
@@ -295,8 +295,11 @@ module.exports = function ControlServiceFactory(
     window.cc = this
   }
 
-  controlService.create = function(target, channel) {
-    return new ControlService(target, channel)
+  controlService.create = function(target, channel, sessionId) {
+    var cs = new ControlService(target, channel, sessionId);
+    console.log('new ControlService', cs)
+    console.log('ControlService arguments', arguments)
+    return cs
   }
 
   return controlService
