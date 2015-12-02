@@ -153,6 +153,16 @@ module.exports = function DeviceScreenDirective(
         }
 
         function shouldUpdateScreen() {
+
+          console.log("*** Erik: shouldUpdateScreen?",
+            scope.$parent.showScreen,
+            // NO if we're not even using the device anymore.
+            device.using,
+            // NO if the page is not visible (e.g. background tab).
+            !PageVisibilityService.hidden,
+            // NO if we don't have a connection yet.
+            ws.readyState === WebSocket.OPEN);
+
           return (
             // NO if the user has disabled the screen.
             scope.$parent.showScreen &&
@@ -177,6 +187,7 @@ module.exports = function DeviceScreenDirective(
             onScreenInterestGained()
           }
           else {
+            console.log("*** Erik: onScreenInterestLost");
             g.clearRect(0, 0, canvas.width, canvas.height)
             onScreenInterestLost()
           }
@@ -199,6 +210,8 @@ module.exports = function DeviceScreenDirective(
 
         function onScreenInterestLost() {
           if (ws.readyState === WebSocket.OPEN) {
+            console.log("*** Erik: sending off event to WebSocket")
+            console.log("*** Erik: canceling off event")
             ws.send('off')
           }
         }

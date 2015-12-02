@@ -82,6 +82,9 @@ module.exports =
     }
 
     getDevice($routeParams.serial)
+    if ($routeParams.sessionId) {
+      alert('sessionId', $routeParams.sessionId)
+    }
 
     $scope.$watch('device.state', function (newValue, oldValue) {
       if (newValue !== oldValue) {

@@ -37,6 +37,10 @@ module.exports = angular.module('control-panes', [
         template: require('./control-panes.jade'),
         controller: 'ControlPanesCtrl'
       })
+      .when('/control/:serial/:sessionId', {
+        template: require('./control-panes.jade'),
+        controller: 'ControlPanesCtrl'
+      })
   }])
   .factory('ControlPanesService', require('./control-panes-service'))
   .controller('ControlPanesCtrl', require('./control-panes-controller'))
