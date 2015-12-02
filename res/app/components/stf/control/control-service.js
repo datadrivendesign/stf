@@ -12,6 +12,11 @@ module.exports = function ControlServiceFactory(
 
   function ControlService(target, channel, sessionId) {
     function sendOneWay(action, data) {
+      // Erik: Attach the sessionId along with the action, so the backend knows
+      // where to save this information.
+      if (sessionId){
+        data.sessionId = sessionId;
+      }
       socket.emit(action, channel, data)
     }
 
