@@ -9,6 +9,7 @@ module.exports = function DeviceScreenDirective(
 , PageVisibilityService
 , $timeout
 , $window
+, TappSessionService
 ) {
   return {
     restrict: 'E'
@@ -18,6 +19,8 @@ module.exports = function DeviceScreenDirective(
     , device: '&'
     }
   , link: function (scope, element) {
+      console.log('TappSessionService', TappSessionService)
+
       var URL = window.URL || window.webkitURL
       var BLANK_IMG =
         'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
@@ -198,7 +201,16 @@ module.exports = function DeviceScreenDirective(
         function onScreenInterestGained() {
           if (ws.readyState === WebSocket.OPEN) {
             ws.send('size ' + adjustedBoundSize.w + 'x' + adjustedBoundSize.h)
-            ws.send('on')
+
+            // Send the sessionId along with the 'on' event.
+            var sessionId = TappSessionService.sessionId;
+            console.log("*** Erik: sending on event to WebSocket with session", sessionId)
+
+            if (sessionId) {
+              ws.send('on:'+sessionId)
+            } else {
+              ws.send('on')
+            }
           }
         }
 
@@ -210,9 +222,15 @@ module.exports = function DeviceScreenDirective(
 
         function onScreenInterestLost() {
           if (ws.readyState === WebSocket.OPEN) {
-            console.log("*** Erik: sending off event to WebSocket")
-            console.log("*** Erik: canceling off event")
-            ws.send('off')
+            // Send the sessionId along with the 'off' event.
+            var sessionId = TappSessionService.sessionId;
+            console.log("*** Erik: sending off event to WebSocket with session", sessionId)
+
+            if (sessionId) {
+              ws.send('off:'+sessionId)
+            } else {
+              ws.send('off')
+            }
           }
         }
 

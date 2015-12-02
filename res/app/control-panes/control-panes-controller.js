@@ -1,7 +1,7 @@
 module.exports =
   function ControlPanesController ($scope, $http, gettext, $routeParams,
     $timeout, $location, DeviceService, GroupService, ControlService,
-    StorageService, FatalMessageService, SettingsService) {
+    StorageService, FatalMessageService, SettingsService, TappSessionService) {
 
     var sharedTabs = [
       {
@@ -60,6 +60,8 @@ module.exports =
     console.log('$scope', $scope)
     console.log('Setting sessionId to', $routeParams.sessionId)
     $scope.sessionId = $routeParams.sessionId;
+    TappSessionService.sessionId = $routeParams.sessionId;
+    console.log('sessionId is', TappSessionService.sessionId)
 
     // TODO: Move this out to Ctrl.resolve
     function getDevice (serial) {
