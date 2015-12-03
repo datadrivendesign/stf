@@ -1,7 +1,7 @@
 var _ = require('lodash')
 
 module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
-  $location, $timeout, $window, $rootScope) {
+  $location, $timeout, $window, $rootScope, TappSessionService, $http) {
 
   $scope.showScreen = true
 
@@ -130,5 +130,24 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
       $window.resizeTo($window.outerHeight, $window.outerWidth)
     }
   }
+
+
+  // Tapp related session functions
+  $scope.startExploring = function () {
+    var url = window.location.hostname+'/phone/start-exploring';
+    $http.get(url, TappSessionService.sessionId).then(function () {
+      alert('Begin!');
+    });
+  };
+
+  $scope.doneExploring = function () {
+    var url = window.location.hostname+'/phone/done-exploring';
+    var redirectUrl = window.location.hostname+'/explore';
+    $http.get(url, TappSessionService.sessionId).then(function () {
+      alert('Done!');
+      $location.path(redirectUrl);
+      $scope.$apply();
+    });
+  };
 
 }
