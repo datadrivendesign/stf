@@ -132,10 +132,17 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   }
 
 
+  // $scope.device
+
+  console.log('$scope!', $scope)
   // Tapp related session functions
   $scope.startExploring = function () {
     var url = window.location.hostname+'/phone/start-exploring';
-    $http.get(url, TappSessionService.sessionId).then(function () {
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      serial: $scope.device.serial
+    };
+    $http.get(url, data).then(function () {
       alert('Begin!');
     });
   };
@@ -143,7 +150,11 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   $scope.doneExploring = function () {
     var url = window.location.hostname+'/phone/done-exploring';
     var redirectUrl = window.location.hostname+'/explore';
-    $http.get(url, TappSessionService.sessionId).then(function () {
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      serial: $scope.device.serial
+    };
+    $http.get(url, data).then(function () {
       alert('Done!');
       $location.path(redirectUrl);
       $scope.$apply();
