@@ -20,6 +20,7 @@ module.exports = function DeviceScreenDirective(
     }
   , link: function (scope, element) {
       console.log('TappSessionService', TappSessionService)
+      TappSessionService.imgCount = TappSessionService.imgCount || 1;
 
       var URL = window.URL || window.webkitURL
       var BLANK_IMG =
@@ -320,6 +321,11 @@ module.exports = function DeviceScreenDirective(
 
             if (message.data instanceof Blob) {
               if (shouldUpdateScreen()) {
+                // Erik: When we get a new frame, increment the img count.  This
+                // will be sent along with each touch event we intercept, so 
+                // that we understand which image is associated with an event.
+                TappSessionService.imgCount++;
+
                 if (scope.displayError) {
                   scope.$apply(function () {
                     scope.displayError = false

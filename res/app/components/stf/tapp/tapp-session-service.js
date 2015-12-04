@@ -2,9 +2,36 @@ module.exports = function TappSessionServiceFactory(
   $rootScope
 , socket
 , AppState
+, $http
 ) {
+	var countMap;
+	if (window.localStorage) {
+		try {
+			countMap = JSON.parse(localStorage('imgCounts') || '{}');
+		} catch (e) {
 
-  return {
-    sessionId: null
+		}
+	}
+
+  var service = {
+  	serial		: null,
+    sessionId	: null,
+    imgCount	: 1,
+    loadSession	: function (sessionId) {
+    	// body...
+    },
+    countMap	: countMap,
+    snapLog   : function () {
+      var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
+      var data = {
+        sessionId: service.sessionId,
+        serial: service.serial
+      };
+      return $http.get(url, {params: data}).then(function (result) {
+        console.log(result);
+      })
+    }
   }
+
+  return service;
 }

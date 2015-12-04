@@ -61,11 +61,12 @@ module.exports =
     console.log('Setting sessionId to', $routeParams.sessionId)
     $scope.sessionId = $routeParams.sessionId;
     TappSessionService.sessionId = $routeParams.sessionId;
+    TappSessionService.serial = $routeParams.serial;
     console.log('sessionId is', TappSessionService.sessionId)
 
     // TODO: Move this out to Ctrl.resolve
     function getDevice (serial) {
-      DeviceService.get(serial, $scope)
+      return DeviceService.get(serial, $scope)
         .then(function (device) {
           return GroupService.invite(device)
         })

@@ -4,8 +4,7 @@
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
         .stf-vnc-right-buttons.pull-right
           .btn-group
-            label.btn-sm.btn-primary-outline(type='button', ng-click='startExploring()') Start Exploring
-            label.btn-sm.btn-primary-outline(type='button', ng-click='doneExploring()') Done Exploring
+            label.btn-sm.btn-primary-outline(type='button', ng-disabled='waitingForDone', ng-click='doneExploring()') Done Exploring
           .button-spacer
 
           .btn-group

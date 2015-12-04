@@ -132,32 +132,55 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   }
 
 
-  // $scope.device
-
   console.log('$scope!', $scope)
+
   // Tapp related session functions
   $scope.startExploring = function () {
     var url = window.location.protocol+'//'+window.location.hostname+'/phone/start-exploring';
     var data = {
       sessionId: TappSessionService.sessionId,
-      serial: $scope.device.serial
+      serial: TappSessionService.serial
     };
-    $http.get(url, {params: data}).then(function () {
-      alert('Begin!');
+    return $http.get(url, {params: data}).then(function () {
+      $scope.waitingForDone = false;
+    }, function () {
+      alert('Sorry, something went wrong when starting the XML capture service :(  Please tell somebody!')
     });
   };
 
-  $scope.doneExploring = function () {
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
-    var redirectUrl = window.location.hostname+'/explore';
+  function snapLog () {
+    var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
     var data = {
       sessionId: TappSessionService.sessionId,
-      serial: $scope.device.serial
+      serial: TappSessionService.serial
     };
+    return $http.get(url, {params: data}).then(function (result) {
+      console.log(result);
+    })
+  }
+
+  // Whether or not to disable the done button.
+  $scope.waitingForDone = true;
+
+  // Perform an initial setup and XML capture.
+  $scope.startExploring()
+    .then(function () {
+      TappSessionService.snapLog();
+    })
+
+  $scope.doneExploring = function () {
+    var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
+    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/explore';
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      serial: TappSessionService.serial
+    };
+    $scope.waitingForDone = true;
     $http.get(url, {params: data}).then(function () {
       alert('Done!');
-      $location.path(redirectUrl);
-      $scope.$apply();
+      window.location = redirectUrl;
+    }, function () {
+      $scope.waitingForDone = false;
     });
   };
 

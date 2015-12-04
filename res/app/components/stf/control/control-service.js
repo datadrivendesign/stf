@@ -6,6 +6,7 @@ module.exports = function ControlServiceFactory(
 , $rootScope
 , gettext
 , KeycodesMapped
+, TappSessionService
 ) {
   var controlService = {
   }
@@ -14,8 +15,10 @@ module.exports = function ControlServiceFactory(
     function sendOneWay(action, data) {
       // Erik: Attach the sessionId along with the action, so the backend knows
       // where to save this information.
-      if (sessionId){
+      if (sessionId) {
         data.sessionId = sessionId;
+        data.imgCount = TappSessionService.imgCount;
+        TappSessionService.snapLog();
       }
       socket.emit(action, channel, data)
     }
