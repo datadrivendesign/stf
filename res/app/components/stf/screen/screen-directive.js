@@ -318,14 +318,10 @@ module.exports = function DeviceScreenDirective(
 
           return function messageListener(message) {
             screen.rotation = device.display.rotation
+            var frameCountKeyword = 'frameCount:';
 
             if (message.data instanceof Blob) {
               if (shouldUpdateScreen()) {
-                // Erik: When we get a new frame, increment the img count.  This
-                // will be sent along with each touch event we intercept, so 
-                // that we understand which image is associated with an event.
-                TappSessionService.imgCount++;
-
                 if (scope.displayError) {
                   scope.$apply(function () {
                     scope.displayError = false
@@ -383,6 +379,14 @@ module.exports = function DeviceScreenDirective(
               scope.$apply(function () {
                 scope.displayError = 'secure'
               })
+            } else if (message.data.indexOf(frameCountKeyword) === 0) {
+              var count = message.data.slice(frameCountKeyword.length);
+              count = parseInt(count, 10);
+
+              // Erik: When the server sends us a frame, we also get a socket
+              // message to update the count.  This allows each input
+              // interaction to know its associated frame.
+              TappSessionService.imgCount = count;
             }
           }
         })()

@@ -12,6 +12,9 @@ module.exports = function ControlServiceFactory(
   }
 
   function ControlService(target, channel, sessionId) {
+    // TODO(Erik): Implement a buffer approach
+    var socketBuffer;
+
     function sendOneWay(action, data) {
       // Erik: Attach the sessionId along with the action, so the backend knows
       // where to save this information.
@@ -87,9 +90,12 @@ module.exports = function ControlServiceFactory(
     }
 
     this.touchCommit   = function(seq) {
-      sendOneWay('input.touchCommit', {
-        seq: seq
-      })
+      // Debug: add artificial delay before touchCommits
+      // setTimeout(function () {
+        sendOneWay('input.touchCommit', {
+          seq: seq
+        }, 200)
+      // })
     }
 
     this.touchReset   = function(seq) {
