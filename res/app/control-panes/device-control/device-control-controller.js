@@ -166,6 +166,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   $scope.startExploring()
     // .then(function () { TappSessionService.snapLog() })
 
+  $scope.showBlockingBar = function () {
+    return !!TappSessionService.sessionId;
+  }
+
   $scope.doneExploring = function () {
     var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
     var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/explore';

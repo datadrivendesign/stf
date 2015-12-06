@@ -63,6 +63,9 @@ module.exports =
     TappSessionService.sessionId = $routeParams.sessionId;
     TappSessionService.serial = $routeParams.serial;
     console.log('sessionId is', TappSessionService.sessionId)
+    if (!$scope.sessionId) {
+      alert('No sessionId found, events will not be recorded');
+    }
 
     // TODO: Move this out to Ctrl.resolve
     function getDevice (serial) {

@@ -1,6 +1,6 @@
-.interact-control.fill-height.as-table.stf-device-control(ng-controller='DeviceControlCtrl')
+.interact-control.fill-height.fill-width.as-table.stf-device-control(ng-controller='DeviceControlCtrl')
   .as-cell.fill-height
-    .as-table.fill-height
+    .as-table.fill-height.fill-width
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
         .stf-vnc-right-buttons.pull-right
           .btn-group
@@ -47,7 +47,7 @@
               device-screen(device='device', control='control')
 
       .stf-vnc-bottom.as-row(ng-hide='$root.standalone')
-        .controls
+        .controls.cover-menu-buttons
           .btn-group.btn-group-justified
             a(device-control-key='menu', title='{{"Menu"|translate}}').btn.btn-primary.btn-lg.no-transition
               i.fa.fa-bars
@@ -55,3 +55,5 @@
               i.fa.fa-home
             a(device-control-key='back', title='{{"Back"|translate}}').btn.btn-primary.btn-lg.no-transition
               i.fa.fa-mail-reply
+
+      .blocking-bar.as-row(ng-show="showBlockingBar()")
