@@ -27,9 +27,7 @@ module.exports = function TappSessionServiceFactory(
         sessionId: service.sessionId,
         serial: service.serial
       };
-      return $http.get(url, {params: data}).then(function (result) {
-        console.log(result);
-      })
+      return $http.get(url, {params: data})
     }
   }
 

@@ -164,9 +164,7 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
 
   // Perform an initial setup and XML capture.
   $scope.startExploring()
-    .then(function () {
-      TappSessionService.snapLog();
-    })
+    // .then(function () { TappSessionService.snapLog() })
 
   $scope.doneExploring = function () {
     var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
@@ -176,12 +174,25 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
       serial: TappSessionService.serial
     };
     $scope.waitingForDone = true;
+
+    // Try to take a final XML, then submit the session.
+    TappSessionService.snapLog()
+    .then(submitSession, submitSession);
+  };
+
+  function submitSession () {
+    var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
+    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/explore';
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      serial: TappSessionService.serial
+    };
     $http.get(url, {params: data}).then(function () {
       alert('Done!');
       window.location = redirectUrl;
     }, function () {
       $scope.waitingForDone = false;
     });
-  };
+  }
 
 }

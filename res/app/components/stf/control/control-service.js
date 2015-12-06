@@ -5,28 +5,31 @@ module.exports = function ControlServiceFactory(
 , TransactionService
 , $rootScope
 , gettext
-, KeycodesMapped
-, TappSessionService
+, KeycodesMapped,
+TappSessionService
 ) {
   var controlService = {
   }
 
   function ControlService(target, channel, sessionId) {
-    // TODO(Erik): Implement a buffer approach
-    var socketBuffer;
 
-    function sendOneWay(action, data) {
-      // Erik: Attach the sessionId along with the action, so the backend knows
-      // where to save this information.
-      if (sessionId) {
+    // Erik: We intercept socket events and attach our sessionId so the backend
+    // knows who needs an XML request.
+    function addSessionId (data) {
+      if (data) {
         data.sessionId = sessionId;
         data.imgCount = TappSessionService.imgCount;
-        TappSessionService.snapLog();
       }
+      return data;
+    }
+
+    function sendOneWay(action, data) {
+      data = addSessionId(data);
       socket.emit(action, channel, data)
     }
 
     function sendTwoWay(action, data) {
+      data = addSessionId(data);
       var tx = TransactionService.create(target)
       socket.emit(action, channel, tx.channel, data)
       return tx.promise
@@ -90,12 +93,9 @@ module.exports = function ControlServiceFactory(
     }
 
     this.touchCommit   = function(seq) {
-      // Debug: add artificial delay before touchCommits
-      // setTimeout(function () {
-        sendOneWay('input.touchCommit', {
-          seq: seq
-        }, 200)
-      // })
+      sendOneWay('input.touchCommit', {
+        seq: seq
+      })
     }
 
     this.touchReset   = function(seq) {
