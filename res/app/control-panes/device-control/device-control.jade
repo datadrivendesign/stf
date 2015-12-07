@@ -3,6 +3,13 @@
     .as-table.fill-height.fill-width
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
         .stf-vnc-right-buttons.pull-right
+
+          label This app is unsuitable
+          input(type="checkbox" ng-model="isBadApp")
+          label I am very familiar with this app
+          input(type="checkbox" ng-model="isExpertUser")
+          .button-spacer
+
           .btn-group
             label.btn-sm.btn-primary-outline(type='button', ng-disabled='waitingForDone', ng-click='doneExploring()') Done Exploring
           .button-spacer

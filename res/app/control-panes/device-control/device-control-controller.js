@@ -170,13 +170,9 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     return !!TappSessionService.sessionId;
   }
 
+
+
   $scope.doneExploring = function () {
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
-    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/explore';
-    var data = {
-      sessionId: TappSessionService.sessionId,
-      serial: TappSessionService.serial
-    };
     $scope.waitingForDone = true;
 
     // Try to take a final XML, then submit the session.
@@ -189,7 +185,9 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/explore';
     var data = {
       sessionId: TappSessionService.sessionId,
-      serial: TappSessionService.serial
+      serial: TappSessionService.serial,
+      isBadApp: $scope.isBadApp,
+      isExpertUser: $scope.isExpertUser
     };
     $http.get(url, {params: data}).then(function () {
       alert('Done!');
