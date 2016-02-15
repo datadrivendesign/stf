@@ -136,6 +136,8 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
 
   // Tapp related session functions
   $scope.startExploring = function () {
+
+
     var url = window.location.protocol+'//'+window.location.hostname+'/phone/start-exploring';
     var data = {
       sessionId: TappSessionService.sessionId,
@@ -179,10 +181,22 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     TappSessionService.snapLog()
     .then(submitSession, submitSession);
   };
-
+  //TODO(Stefanus): have a way to remember where the button was clicked, save it in some kind of seesion pass in 
+  //would also be a good idea
   function submitSession () {
+      var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
+      console.log("Sent Image was: " + TappSessionService.imgCount);
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      imgCount: TappSessionService.imgCount,
+      serial: TappSessionService.serial
+    };
+    $http.get(url, {params: data}).then(function (result) {
+      console.log(result);
+    });
+
     var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
-    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/explore';
+    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/';
     var data = {
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial,

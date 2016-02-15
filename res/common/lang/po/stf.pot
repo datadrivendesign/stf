@@ -243,23 +243,23 @@ msgstr ""
 msgid "Customize"
 msgstr ""
 
-#: app/control-panes/advanced/input/input.html:1
+#: app/control-panes/advanced/input/input.html:12
 msgid "D-pad Center"
 msgstr ""
 
-#: app/control-panes/advanced/input/input.html:1
+#: app/control-panes/advanced/input/input.html:20
 msgid "D-pad Down"
 msgstr ""
 
-#: app/control-panes/advanced/input/input.html:1
+#: app/control-panes/advanced/input/input.html:9
 msgid "D-pad Left"
 msgstr ""
 
-#: app/control-panes/advanced/input/input.html:1
+#: app/control-panes/advanced/input/input.html:15
 msgid "D-pad Right"
 msgstr ""
 
-#: app/control-panes/advanced/input/input.html:1
+#: app/control-panes/advanced/input/input.html:4
 msgid "D-pad Up"
 msgstr ""
 
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Device"
 msgstr ""
 
-#: app/device-list/details/device-list-details-directive.js:36
+#: app/device-list/details/device-list-details-directive.js:39
 #: app/device-list/icons/device-list-icons-directive.js:123
 msgid "Device cannot get kicked from the group"
 msgstr ""
@@ -378,7 +378,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: app/components/stf/control/control-service.js:129
+#: app/components/stf/control/control-service.js:143
 msgid "Error while getting data"
 msgstr ""
 
@@ -432,6 +432,10 @@ msgstr ""
 
 #: app/settings/settings-controller.js:5
 msgid "General"
+msgstr ""
+
+#: app/control-panes/advanced/vnc/vnc.html:1
+msgid "Generate Login for VNC"
 msgstr ""
 
 #: app/control-panes/logs/logs.html:1
@@ -691,7 +695,7 @@ msgstr ""
 msgid "No ADB keys"
 msgstr ""
 
-#: app/components/stf/control/control-service.js:126
+#: app/components/stf/control/control-service.js:140
 msgid "No clipboard data"
 msgstr ""
 
@@ -778,6 +782,7 @@ msgstr ""
 msgid "Package"
 msgstr ""
 
+#: app/control-panes/advanced/vnc/vnc.html:1
 #: app/control-panes/automation/store-account/store-account.html:1
 msgid "Password"
 msgstr ""
@@ -847,6 +852,7 @@ msgid "Please enter your Store username"
 msgstr ""
 
 #: app/control-panes/advanced/port-forwarding/port-forwarding.html:1
+#: app/control-panes/advanced/vnc/vnc.html:1
 msgid "Port"
 msgstr ""
 
@@ -1043,6 +1049,10 @@ msgstr ""
 #: app/control-panes/info/info.html:1
 #: app/device-list/column/device-column-service.js:159
 msgid "Serial"
+msgstr ""
+
+#: app/control-panes/advanced/vnc/vnc.html:1
+msgid "Server"
 msgstr ""
 
 #: auth/ldap/scripts/signin/signin.html:1
@@ -1421,6 +1431,10 @@ msgstr ""
 
 #: app/control-panes/automation/device-settings/device-settings.html:1
 msgid "Vibrate Mode"
+msgstr ""
+
+#: app/control-panes/advanced/vnc/vnc.html:1
+msgid "VNC"
 msgstr ""
 
 #: app/control-panes/info/info.html:1

@@ -25,7 +25,8 @@ module.exports = function TappSessionServiceFactory(
       var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
       var data = {
         sessionId: service.sessionId,
-        serial: service.serial
+        serial: service.serial,
+        imgCount: service.imgCount
       };
       return $http.get(url, {params: data})
     }
