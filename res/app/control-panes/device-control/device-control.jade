@@ -1,53 +1,40 @@
 .interact-control.fill-height.fill-width.as-table.stf-device-control(ng-controller='DeviceControlCtrl')
   .as-cell.fill-height
     .as-table.fill-height.fill-width
-      .stf-vnc-navbar.as-column.pull-left(ng-show='!$root.basicMode && !$root.standalone')
+      .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
         .stf-vnc-right-buttons.pull-right
-
-          label This app is unsuitable
-          input(type="checkbox" ng-model="isBadApp")
-          label I am very familiar with this app
-          input(type="checkbox" ng-model="isExpertUser")
+          .btn-group
+            
+            input(type="checkbox" ng-model="isBadApp")
+            label Bad App 
+            .button-spacer 
+            input(type="checkbox" ng-model="isGreatApp")
+            label Great App  
           .button-spacer
 
           .btn-group
-            label.btn-sm.btn-primary-outline(type='button', ng-disabled='waitingForDone', ng-click='doneExploring()') Done Exploring
-          .button-spacer
-
+            label.btn-sm.btn-danger(type='button', ng-disabled='waitingForDone', ng-click='done()') Done Exploring
+            .button-spacer
+            input(type="checkbox" ng-model="discard")
+            Session Discard Session 
+        .stf-vnc-right-buttons.pull-left
           .btn-group
-            label.btn-sm.btn-primary-outline(type='button', ng-click='tryToRotate("portrait")',
-            ng-model='currentRotation', btn-radio='"portrait"').pointer
-              i.fa.fa-mobile(tooltip='{{ "Portrait" | translate }} (Current rotation: {{ device.display.rotation }}°)', tooltip-placement='bottom')
-            label.btn-sm.btn-primary-outline(type='button', ng-click='tryToRotate("landscape")',
-              ng-model='currentRotation', btn-radio='"landscape"').pointer
-              i.fa.fa-mobile.fa-rotate-90(tooltip='{{ "Landscape" | translate }} (Current rotation: {{ device.display.rotation }}°)', tooltip-placement='bottom')
-          .button-spacer
-          button(type='button', ng-model='showScreen', btn-checkbox).btn.btn-sm.btn-danger
-            i(ng-show='showScreen', tooltip-html-unsafe='{{"Hide Screen"|translate}}', tooltip-placement='bottom').fa.fa-eye
-            i(ng-show='!showScreen', tooltip-html-unsafe='{{"Show Screen"|translate}}', tooltip-placement='bottom').fa.fa-eye-slash
-
-        .device-name-container.pull-left(dropdown)
-          a.stf-vnc-device-name.pointer.unselectable(dropdown-toggle)
-            p
-              .device-small-image
-                img(ng-src='/static/app/devices/icon/x24/{{ device.image || "E30HT.jpg" }}')
-              span.device-name-text {{ device.enhancedName }}
-              span.caret(ng-show='groupDevices.length > 0')
-
-          ul.dropdown-menu(role='menu', data-toggle='dropdown', ng-show='groupDevices.length > 0').pointer.unselectable
-            li(ng-repeat='groupDevice in groupDevices')
-              a.device-name-menu-element(ng-click='controlDevice(groupDevice); $event.stopPropagation()')
-                .pull-left
-                  .device-small-image
-                    img(ng-src='/static/app/devices/icon/x24/{{ groupDevice.image || "E30HT.jpg" }}')
-                  span(ng-class='{"current-device": groupDevice.serial === device.serial }') {{ groupDevice.enhancedName }}
-
-                .pull-right(ng-click='kickDevice(groupDevice); $event.stopPropagation()').kick-device
-                  i.fa.fa-times
-                .clearfix
-
+            .button-spacer
+            span.device-name-text {{ phoneName }}
+            .button-spacer
+            .button-spacer
+            label.btn-sm.btn-primary(type='button', ng-disabled='loginClicked', ng-click='loginPageFoundHandler()') Login Found
+            .button-spacer
+            label.btn-sm.btn-primary(type='button', ng-disabled='signupClicked', ng-click='signupPageFoundHandler()') Signup Found
+            .button-spacer
+            label.btn-sm.btn-primary(type='button', ng-disabled='signupClicked', ng-click='searchPageFoundHandler()') Search Found
+            .button-spacer
+            .button-spacer
+            p(style="display:inline")
+              time 00:00:00
+            .button-spacer
+            
       .as-row.fill-height
-
         div(ng-controller='DeviceScreenCtrl', ng-if='device').fill-height
           div(ng-file-drop='installFile($files)', ng-file-drag-over-class='dragover').fill-height
             device-context-menu(device='device', control='control')

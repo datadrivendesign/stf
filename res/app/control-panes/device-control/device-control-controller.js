@@ -4,11 +4,23 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   $location, $timeout, $window, $rootScope, TappSessionService, $http) {
 
   $scope.showScreen = true
-
+  $rootScope.menuShow = false;
   $scope.groupTracker = DeviceService.trackGroup($scope)
+  $scope.signupClicked = false;
+  $scope.loginClicked = false;
 
   $scope.groupDevices = $scope.groupTracker.devices
 
+  var PHONE_DICT= {
+        "ZX1G22JQ5X" : "1",
+        "ZX1G22JPNS" : "2",
+        "ZX1G228FCS" : "3",
+        "ZX1G22NBLH" : "4",
+        "ZX1G22NPV9" : "5",
+        "ZX1G22NC5F" : "6"
+
+        
+  };
   $scope.kickDevice = function (device) {
 
     if (!device || !$scope.device) {
@@ -86,8 +98,8 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     }
   }
 
-  $scope.currentRotation = 'portrait'
-
+  $scope.currentRotation = 'portrait';
+ 
   $scope.$watch('device.display.rotation', function (newValue) {
     if (isPortrait(newValue)) {
       $scope.currentRotation = 'portrait'
@@ -148,6 +160,7 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     }, function () {
       alert('Sorry, something went wrong when starting the XML capture service :(  Please tell somebody!')
     });
+    convertPhoneName(TappSessionService.serial);
   };
 
   function snapLog () {
@@ -172,8 +185,47 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     return !!TappSessionService.sessionId;
   }
 
+//'/cleaning-discard'
+  $scope.discardSession = function(){
+    $scope.waitingForDone = true;
 
+    // Try to take a final XML, then submit the session.
+    TappSessionService.snapLog()
+    .then(discardSessionHelper, discardSessionHelper);
+  };
 
+  function discardSessionHelper (){
+
+    var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
+      console.log("Sent Image was: " + TappSessionService.imgCount);
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      imgCount: TappSessionService.imgCount,
+      serial: TappSessionService.serial
+    };
+    $http.get(url, {params: data}).then(function (result) {
+      console.log(result);
+    });
+
+    var url = window.location.protocol+'//'+window.location.hostname+'/phone/discard-exploring';
+    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/';
+    var data = {
+      sessionId: TappSessionService.sessionId,
+      serial: TappSessionService.serial,
+      isBadApp: $scope.isBadApp,
+      isGreatApp : $scope.isGreatApp,
+      isExpertUser: $scope.isExpertUser,
+      loginImgCount : loginPageImgCount,
+      signupImgCount : signupPageImgCount,
+      searchImgCount : searchPageImgCount
+    };
+    $http.get(url, {params: data}).then(function () {
+      alert('Done!');
+      window.location = redirectUrl;
+    }, function () {
+      $scope.waitingForDone = false;
+    });
+  }
   $scope.doneExploring = function () {
     $scope.waitingForDone = true;
 
@@ -201,7 +253,11 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial,
       isBadApp: $scope.isBadApp,
-      isExpertUser: $scope.isExpertUser
+      isGreatApp : $scope.isGreatApp,
+      isExpertUser: $scope.isExpertUser,
+      loginImgCount : loginPageImgCount,
+      signupImgCount : signupPageImgCount,
+      searchImgCount : searchPageImgCount
     };
     $http.get(url, {params: data}).then(function () {
       alert('Done!');
@@ -210,5 +266,69 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
       $scope.waitingForDone = false;
     });
   }
+  $scope.phoneName ="Phone ";
+
+  $scope.loginPageFoundHandler = function(){
+    $scope.loginClicked = true;
+      loginPageImgCount = TappSessionService.imgCount;
+      console.log("image count: "+ loginPageImgCount);
+      alert('Page login is logged');
+  }
+   $scope.signupPageFoundHandler = function(){
+    $scope.signupClicked = true;
+      signupPageImgCount = TappSessionService.imgCount;
+      console.log("image count: "+ signupPageImgCount);
+      alert('Signup Page is logged');
+  }
+  $scope.searchPageFoundHandler = function(){
+
+      searchPageImgCount.push(TappSessionService.imgCount);
+      console.log(searchPageImgCount);
+      alert('Search Page is logged');
+  }
+
+  var convertPhoneName= function(serial){
+      console.log('Serial '+serial);
+      if(!serial)
+          return "Null serial"
+      $scope.phoneName+= PHONE_DICT[serial];
+  }
+  convertPhoneName(TappSessionService.serial);
+  var loginPageImgCount = null;
+  var signupPageImgCount = null;
+  var searchPageImgCount = [];
+
+  $scope.done = function(){
+    if(!$scope.discard)
+      $scope.doneExploring();
+    else
+      $scope.discardSession();
+  }
+  var h2 = document.getElementsByTagName('p')[0],
+    start = document.getElementById('start'),
+    stop = document.getElementById('stop'),
+    clear = document.getElementById('clear'),
+    seconds = 0, minutes = 0, hours = 0,
+    t;
+
+function add() {
+    seconds++;
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+    
+    h2.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+    timer();
+}
+function timer() {
+    t = setTimeout(add, 1000);
+}
+timer();
 
 }

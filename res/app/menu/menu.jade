@@ -1,5 +1,5 @@
 .navbar.stf-menu(ng-controller='MenuCtrl')
-  .container-fluid.stf-top-bar
+  .container-fluid.stf-top-bar(ng-show="menuShow")
     a.stf-logo(ng-href="/#!/devices") STF
     ul.nav.stf-nav(nav-menu='current').unselectable
       li(ng-cloak)
