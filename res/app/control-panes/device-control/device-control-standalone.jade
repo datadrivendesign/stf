@@ -2,4 +2,5 @@
   div(ng-controller='DeviceScreenCtrl', ng-if='device').fill-height.fill-width
     div(ng-file-drop='installFile($files)', ng-file-drag-over-class='dragover').fill-height.fill-width
       device-context-menu(device='device', control='control')
+      div(style = ' background-color: black;width: 206px; position: fixed;height: 50px;float: right;z-index: 100000000;transform: translate(12em,40em);', ng-click = 'done()')
         device-screen(device='device', control='control').fill-height.fill-width
