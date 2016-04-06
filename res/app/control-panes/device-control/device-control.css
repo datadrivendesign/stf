@@ -11,14 +11,32 @@
 }
 
 .mobile-button{
-  background-color: white !important;
+  background-color: blue !important;
   width: 103px !important;
   height: 50px !important; 
   position: fixed !important; 
   float: right !important; 
   z-index: 100000000 !important;
-  transform: translate(12em,41em) !important;
-  display: none !important;
+  transform: translate(12em,40em) !important;
+  display: block !important;
+}
+
+.mobile-button-2{
+  background-color: red !important;
+  width: 206px !important;
+  height: 50px !important; 
+  position: fixed !important; 
+  float: right !important; 
+  z-index: 100000000 !important;
+  transform: translate(12em,40em) !important;
+  display: block !important;
+}
+
+@media only screen and (max-width:  : 1026px){
+
+  .mobile-button .mobile-button-2 {
+    display: none !important;
+  }
 }
 
 device-screen {

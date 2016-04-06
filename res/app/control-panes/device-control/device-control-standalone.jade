@@ -2,5 +2,6 @@
   div(ng-controller='DeviceScreenCtrl', ng-if='device').fill-height.fill-width
     div(ng-file-drop='installFile($files)', ng-file-drag-over-class='dragover').fill-height.fill-width
       device-context-menu(device='device', control='control')
-      .mobile-buttton(ng-click = 'done()')
+        .mobile-button-2(ng-click = 'discardSession()')
+        .mobile-button(ng-click = 'done()')
         device-screen(device='device', control='control').fill-height.fill-width
