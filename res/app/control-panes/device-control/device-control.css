@@ -10,6 +10,17 @@
   opacity: 1;
 }
 
+.mobile-button{
+  background-color: white !important;
+  width: 103px !important;
+  height: 50px !important; 
+  position: fixed !important; 
+  float: right !important; 
+  z-index: 100000000 !important;
+  transform: translate(12em,41em) !important;
+  display: none !important;
+}
+
 device-screen {
   width: 100%;
   height: 100%;
