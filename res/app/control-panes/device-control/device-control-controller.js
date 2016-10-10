@@ -151,6 +151,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   $scope.startExploring = function () {
     var ip = window.location.hostname;
     ip = '127.0.0.1:5000'; // Forrest
+    ip = window.location.host;
+    if (ip.indexOf(":") != -1) {
+      ip = ip.split(":")[0] + ":5000";
+    }
     var url = window.location.protocol+'//'+ ip +'/phone/start-exploring';
     console.log(url)
     var data = {
@@ -168,6 +172,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   function snapLog () {
     var ip = window.location.hostname;
     ip = '127.0.0.1:5000'; // Forrest
+    ip = window.location.host;
+    if (ip.indexOf(":") != -1) {
+      ip = ip.split(":")[0] + ":5000";
+    }
     var url = window.location.protocol+'//'+ ip +'/phone/snap-xml';
     var data = {
       sessionId: TappSessionService.sessionId,
@@ -201,6 +209,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   function discardSessionHelper (){
     var ip = window.location.hostname;
     ip = '127.0.0.1:5000'; // Forrest
+    ip = window.location.host;
+    if (ip.indexOf(":") != -1) {
+      ip = ip.split(":")[0] + ":5000";
+    }
     var url = window.location.protocol+'//'+ ip +'/phone/snap-xml';
       console.log("Sent Image was: " + TappSessionService.imgCount);
     var data = {
