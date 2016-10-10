@@ -268,11 +268,14 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     $http.get(url, {params: data}).then(function (result) {
       console.log(result);
     });
-    var ip = window.location.hostname;
-    ip = '127.0.0.1:5000'; // Forrest
+    var ip = window.location.host;
+    if (ip.indexOf(":") != -1) {
+      ip = ip.split(":")[0] + ":5000";
+    }
+   // ip = '127.0.0.1:5000'; // Forrest
    
     var url = window.location.protocol+'//'+ ip +'/phone/done-exploring';
-    var redirectUrl = window.location.protocol+'//'+ ip +'/';
+    var redirectUrl = window.location.protocol+'//'+ ip +'/exact-app';
     var data = {
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial,
