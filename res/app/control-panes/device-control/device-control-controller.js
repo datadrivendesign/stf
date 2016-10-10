@@ -148,23 +148,26 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
 
   // Tapp related session functions
   $scope.startExploring = function () {
-
-
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/start-exploring';
+    var ip = window.location.hostname;
+    ip = '127.0.0.1:5000'; // Forrest
+    var url = window.location.protocol+'//'+ ip +'/phone/start-exploring';
+    console.log(url)
     var data = {
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial
     };
     return $http.get(url, {params: data}).then(function () {
       $scope.waitingForDone = false;
-    }, function () {
-      alert('Sorry, something went wrong when starting the XML capture service :(  Please tell somebody!')
+    }, function (res) {
+      alert('Sorry, something went wrong when starting the XML capture service :(  Please tell somebody!' + res.data)
     });
     convertPhoneName(TappSessionService.serial);
   };
 
   function snapLog () {
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
+    var ip = window.location.hostname;
+    ip = '127.0.0.1:5000'; // Forrest
+    var url = window.location.protocol+'//'+ ip +'/phone/snap-xml';
     var data = {
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial
@@ -195,8 +198,9 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   };
 
   function discardSessionHelper (){
-
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
+    var ip = window.location.hostname;
+    ip = '127.0.0.1:5000'; // Forrest
+    var url = window.location.protocol+'//'+ ip +'/phone/snap-xml';
       console.log("Sent Image was: " + TappSessionService.imgCount);
     var data = {
       sessionId: TappSessionService.sessionId,
@@ -206,8 +210,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     $http.get(url, {params: data}).then(function (result) {
       console.log(result);
     });
-
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/discard-exploring';
+   
+    var ip = window.location.hostname;
+    ip = '127.0.0.1:5000'; // Forrest
+    var url = window.location.protocol+'//' + ip + '/phone/discard-exploring';
     var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/';
     var data = {
       sessionId: TappSessionService.sessionId,
@@ -236,8 +242,11 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   //TODO(Stefanus): have a way to remember where the button was clicked, save it in some kind of seesion pass in 
   //would also be a good idea
   function submitSession () {
-      var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
-      console.log("Sent Image was: " + TappSessionService.imgCount);
+    var ip = window.location.hostname;
+    ip = '127.0.0.1:5000'; // Forrest
+    var url = window.location.protocol+'//'+ ip +'/phone/snap-xml';
+   
+    console.log("Sent Image was: " + TappSessionService.imgCount);
     var data = {
       sessionId: TappSessionService.sessionId,
       imgCount: TappSessionService.imgCount,
@@ -246,9 +255,11 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     $http.get(url, {params: data}).then(function (result) {
       console.log(result);
     });
-
-    var url = window.location.protocol+'//'+window.location.hostname+'/phone/done-exploring';
-    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/';
+    var ip = window.location.hostname;
+    ip = '127.0.0.1:5000'; // Forrest
+   
+    var url = window.location.protocol+'//'+ ip +'/phone/done-exploring';
+    var redirectUrl = window.location.protocol+'//'+ ip +'/';
     var data = {
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial,
