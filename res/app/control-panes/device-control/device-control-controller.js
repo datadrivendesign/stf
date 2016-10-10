@@ -2,14 +2,15 @@ var _ = require('lodash')
 
 module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   $location, $timeout, $window, $rootScope, TappSessionService, $http) {
-
   $scope.showScreen = true
   $rootScope.menuShow = false;
   $scope.groupTracker = DeviceService.trackGroup($scope)
   $scope.signupClicked = false;
   $scope.loginClicked = false;
+  $scope.hideModal = false;
 
   $scope.groupDevices = $scope.groupTracker.devices
+
 
   var PHONE_DICT= {
         "ZX1G22JQ5X" : "1",
@@ -18,9 +19,12 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
         "ZX1G22NBLH" : "4",
         "ZX1G22NPV9" : "5",
         "ZX1G22NC5F" : "6"
-
-        
   };
+
+  $scope.fullScreen = function() {
+    document.documentElement.requestFullscreen();
+    $scope.hideModal = true;
+  }
   $scope.kickDevice = function (device) {
 
     if (!device || !$scope.device) {
@@ -142,9 +146,6 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
       $window.resizeTo($window.outerHeight, $window.outerWidth)
     }
   }
-
-
-  console.log('$scope!', $scope)
 
   // Tapp related session functions
   $scope.startExploring = function () {

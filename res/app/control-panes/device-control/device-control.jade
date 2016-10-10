@@ -1,5 +1,18 @@
+.stf-modal#modal(ng-class='{hide: hideModal}')
+  .modal-header.dialog-header-errorX
+    button(type='button', ng-click='cancel()').close &times;
+    h4.modal-title.text-info
+      .button-spacer
+      span(translate) Please press the button below to continue.
+  .modal-body
+    nothing-to-show(message='{{ message | translate }}', icon='fa-plug fa-4x')
+
+  .modal-footer
+    button.btn.btn-primary-outline.pull-right(type='button', ng-click='fullScreen()')
+      span(translate) Continue
+
 .interact-control.fill-height.fill-width.as-table.stf-device-control(ng-controller='DeviceControlCtrl')
-  .as-cell.fill-height
+    .as-cell.fill-height
     .as-table.fill-height.fill-width
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
         .stf-vnc-right-buttons.pull-right
