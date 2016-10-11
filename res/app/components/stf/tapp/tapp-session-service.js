@@ -13,6 +13,11 @@ module.exports = function TappSessionServiceFactory(
 		}
 	}
 
+  var host = window.location.host;
+  if (host.indexOf(":") != -1) {
+    host = host.split(":")[0] + ":5000";
+  }
+
   var service = {
   	serial		: null,
     sessionId	: null,
@@ -22,7 +27,7 @@ module.exports = function TappSessionServiceFactory(
     },
     countMap	: countMap,
     snapLog   : function () {
-      var url = window.location.protocol+'//'+window.location.hostname+'/phone/snap-xml';
+      var url = window.location.protocol+'//'+ host +'/phone/snap-xml';
       var data = {
         sessionId: service.sessionId,
         serial: service.serial,

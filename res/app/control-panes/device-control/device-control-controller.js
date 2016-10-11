@@ -208,7 +208,7 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     .then(discardSessionHelper, discardSessionHelper);
   };
 
-  function discardSessionHelper (){
+  function discardSessionHelper(){
     var ip = window.location.hostname;
     ip = '127.0.0.1:5000'; // Forrest
     ip = window.location.host;
