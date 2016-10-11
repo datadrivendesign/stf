@@ -10,6 +10,40 @@
   opacity: 1;
 }
 
+.continue-btn {
+  padding: 10px, 20px;
+  margin-top:15px;
+  font-size: 16px;
+}
+
+.bottom-button-text {
+  text-align: center;
+  width:100%;
+  height:100%;
+  padding-top: 14px;
+  font-size: 16px;
+}
+
+.mobile-button{
+  width: 100px !important;
+  height: 46px !important; 
+  position: fixed !important; 
+  float: right !important; 
+  z-index: 10000 !important;
+  transform: translate(12em,48.9em) !important;
+  display: block !important;
+}
+
+.mobile-button-2{
+  width: 100px !important;
+  height: 46px !important; 
+  position: fixed !important; 
+  float: right !important; 
+  z-index: 10000 !important;
+  transform: translate(20em,48.9em) !important;
+  display: block !important;
+}
+
 device-screen {
   width: 100%;
   height: 100%;

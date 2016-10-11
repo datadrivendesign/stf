@@ -1,7 +1,15 @@
 .interact-control.fill-height.stf-device-control(ng-controller='DeviceControlCtrl').fill-height.fill-width
+  .block(style='position: fixed; height: 100%; width: 100%; background-color: white; opacity:0.9; z-index:11000;', ng-hide='hideOverlay == true')
+    div(style="position: relative; margin:auto; width:50%; top: 35%; z-index:12000;")
+      h3 Please press the button below to continue: <br>
+        .btn-group 
+          label.continue-btn.btn-sm.btn-primary(type='button', ng-click='fullScreen();') Continue
+
   div(ng-controller='DeviceScreenCtrl', ng-if='device').fill-height.fill-width
     div(ng-file-drop='installFile($files)', ng-file-drag-over-class='dragover').fill-height.fill-width
       device-context-menu(device='device', control='control')
-        .mobile-button-2(ng-click = 'discardSession()') Discard
-        .mobile-button(ng-click = 'done()') Done
+        .mobile-button-2.btn-group 
+          label.bottom-button-text.btn-sm.btn-danger(type='button', ng-click='discardSession();') Discard
+        .mobile-button.btn-group
+          label.bottom-button-text.btn-sm.btn-primary(type='button', ng-click='done();') Done
         device-screen(device='device', control='control').fill-height.fill-width

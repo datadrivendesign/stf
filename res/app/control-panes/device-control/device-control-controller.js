@@ -21,10 +21,6 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
         "ZX1G22NC5F" : "6"
   };
 
-  $scope.fullScreen = function() {
-    document.documentElement.requestFullscreen();
-    $scope.hideModal = true;
-  }
   $scope.kickDevice = function (device) {
 
     if (!device || !$scope.device) {
@@ -147,6 +143,12 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     }
   }
 
+  $scope.fullScreen = function() {  
+    console.log("Tried");
+    document.documentElement.webkitRequestFullscreen();
+    $scope.hideOverlay = true;
+  }
+
   // Tapp related session functions
   $scope.startExploring = function () {
     var ip = window.location.hostname;
@@ -224,10 +226,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
       console.log(result);
     });
    
-    var ip = window.location.hostname;
-    ip = '127.0.0.1:5000'; // Forrest
+   // var ip = window.location.hostname;
+    //ip = '127.0.0.1:5000'; // Forrest
     var url = window.location.protocol+'//' + ip + '/phone/discard-exploring';
-    var redirectUrl = window.location.protocol+'//'+window.location.hostname+'/';
+    var redirectUrl = window.location.protocol+'//'+ ip +'/exact-app';
     var data = {
       sessionId: TappSessionService.sessionId,
       serial: TappSessionService.serial,
@@ -257,6 +259,10 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   function submitSession () {
     var ip = window.location.hostname;
     ip = '127.0.0.1:5000'; // Forrest
+    ip = window.location.host;
+    if (ip.indexOf(":") != -1) {
+      ip = ip.split(":")[0] + ":5000";
+    }
     var url = window.location.protocol+'//'+ ip +'/phone/snap-xml';
    
     console.log("Sent Image was: " + TappSessionService.imgCount);

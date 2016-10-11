@@ -13,6 +13,10 @@ module.exports = function DeviceListCtrl(
   $scope.control = ControlService.create($scope.tracker.devices, '*ALL')
 
   $scope.columnDefinitions = DeviceColumnService
+  $scope.fullScreen = function() {
+    document.documentElement.webkitRequestFullscreen();
+    $scope.hideOverlay = true;
+  }
 
   var defaultColumns = [
     {

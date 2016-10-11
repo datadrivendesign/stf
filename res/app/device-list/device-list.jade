@@ -1,3 +1,9 @@
+.block(style='position: fixed; height: 100%; width: 100%; background-color: white; opacity:0.9; z-index:1;', ng-hide='hideOverlay == true')
+    div(style="position: relative; margin:auto; width:50%; top: 35%; z-index:2;")
+        h3 Please press the button below to continue: <br>
+        .btn-group 
+          label.btn-sm.btn-primary(type='button', ng-click='fullScreen();') Continue
+
 .stf-device-list
   .row.stf-stats-container.unselectable
     .col-md-12

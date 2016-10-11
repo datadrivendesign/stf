@@ -1,17 +1,10 @@
-.stf-modal#modal(ng-class='{hide: hideModal}')
-  .modal-header.dialog-header-errorX
-    button(type='button', ng-click='cancel()').close &times;
-    h4.modal-title.text-info
-      .button-spacer
-      span(translate) Please press the button below to continue.
-  .modal-body
-    nothing-to-show(message='{{ message | translate }}', icon='fa-plug fa-4x')
-
-  .modal-footer
-    button.btn.btn-primary-outline.pull-right(type='button', ng-click='fullScreen()')
-      span(translate) Continue
-
 .interact-control.fill-height.fill-width.as-table.stf-device-control(ng-controller='DeviceControlCtrl')
+    .block(style='position: fixed; height: 100%; width: 100%; background-color: white; opacity:0.9; z-index:1;', ng-hide='hideOverlay == true')
+      div(style="position: relative; margin:auto; width:50%; top: 35%; z-index:2;")
+        h3 Please press the button below to continue: <br>
+        .btn-group 
+          label.btn-sm.btn-primary(type='button', ng-click='fullScreen();') Continue
+
     .as-cell.fill-height
     .as-table.fill-height.fill-width
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
@@ -62,5 +55,6 @@
               i.fa.fa-home
             a(device-control-key='', title='{{"Back"|translate}}').btn.btn-primary.btn-lg.no-transition
               i.fa.fa-mail-reply
-
+      
+            
       .blocking-bar.as-row(ng-show="true")
