@@ -7,7 +7,8 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   $scope.groupTracker = DeviceService.trackGroup($scope)
   $scope.signupClicked = false;
   $scope.loginClicked = false;
-  $scope.hideModal = false;
+  $scope.hideOverlay = false;
+  $scope.finished = false;
 
   $scope.groupDevices = $scope.groupTracker.devices
 
@@ -332,6 +333,7 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   var searchPageImgCount = [];
 
   $scope.done = function(){
+    $scope.finished = true;
     if(!$scope.discard)
       $scope.doneExploring();
     else

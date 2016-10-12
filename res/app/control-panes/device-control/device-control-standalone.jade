@@ -5,6 +5,10 @@
         .btn-group 
           label.continue-btn.btn-sm.btn-primary(type='button', ng-click='fullScreen();') Continue
 
+  .block(style='position: fixed; height: 100%; width: 100%; background-color: white; opacity:0.9; z-index:1;', ng-hide='finished == false')
+    div(style="position: relative; margin:auto; width:50%; top: 35%; z-index:13000;")
+      h3 Saving data, please wait... <br>
+
   div(ng-controller='DeviceScreenCtrl', ng-if='device').fill-height.fill-width
     div(ng-file-drop='installFile($files)', ng-file-drag-over-class='dragover').fill-height.fill-width
       device-context-menu(device='device', control='control')
