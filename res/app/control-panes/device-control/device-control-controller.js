@@ -202,6 +202,7 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
 
 //'/cleaning-discard'
   $scope.discardSession = function(){
+    $scope.finished = true;
     $scope.waitingForDone = true;
 
     // Try to take a final XML, then submit the session.
