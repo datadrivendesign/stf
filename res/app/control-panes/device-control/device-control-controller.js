@@ -145,7 +145,7 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
   }
 
   $scope.fullScreen = function() {  
-    console.log("Tried");
+    document.getElementById("screen-keyboard").readOnly = true;
     document.documentElement.webkitRequestFullscreen();
     $scope.hideOverlay = true;
   }
