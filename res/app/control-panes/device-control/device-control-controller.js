@@ -15,11 +15,12 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
 
   var PHONE_DICT= {
         "ZX1G22JQ5X" : "1",
-        "ZX1G22JPNS" : "2",
-        "ZX1G228FCS" : "3",
-        "ZX1G22NBLH" : "4",
-        "ZX1G22NPV9" : "5",
-        "ZX1G22NC5F" : "6"
+        "ZX1G323CZ2" : "2"
+        "ZX1G22JPNS" : "3",
+        "ZX1G228FCS" : "4",
+        "ZX1G22NBLH" : "5",
+        "ZX1G22NPV9" : "6",
+        "ZX1G22NC5F" : "7"
   };
 
   $scope.kickDevice = function (device) {

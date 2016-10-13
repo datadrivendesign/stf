@@ -8,20 +8,12 @@
     .as-table.fill-height.fill-width
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
         .stf-vnc-right-buttons.pull-right
+          
           .btn-group
-            
-            input(type="checkbox" ng-model="isBadApp")
-            label Bad App 
-            .button-spacer 
-            input(type="checkbox" ng-model="isGreatApp")
-            label Great App  
-          .button-spacer
-
-          .btn-group
-            label.btn-sm.btn-danger(type='button', ng-disabled='waitingForDone', ng-click='done()') Done Exploring
+            label.btn-sm.btn-primary(type='button', ng-disabled='waitingForDone', ng-click='done();') Done Exploring
             .button-spacer
-            input(type="checkbox" ng-model="discard")
-            Session Discard Session 
+            label.btn-sm.btn-danger(type='button', ng-disabled='waitingForDone', ng-click='discardSession();')
+            Discard Session 
         .stf-vnc-right-buttons.pull-left
           .btn-group
             .button-spacer
