@@ -12,15 +12,14 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
 
   $scope.groupDevices = $scope.groupTracker.devices
 
-
   var PHONE_DICT= {
-        "ZX1G22JQ5X" : "1",
+        "ZX1G22NBLH" : "1",
         "ZX1G323CZ2" : "2",
-        "ZX1G22JPNS" : "3",
+        "ZX1G22NC5F" : "3",
         "ZX1G228FCS" : "4",
-        "ZX1G22NBLH" : "5",
+        "ZX1G22JQ5X" : "5",
         "ZX1G22NPV9" : "6",
-        "ZX1G22NC5F" : "7"
+        "ZX1G22JPNS" : "7"
   };
 
   $scope.kickDevice = function (device) {
@@ -145,7 +144,8 @@ module.exports = function DeviceControlCtrl($scope, DeviceService, GroupService,
     }
   }
 
-  $scope.fullScreen = function() {  
+  $scope.fullScreen = function(evt) {  
+    evt.preventDefault();
     document.getElementById("screen-keyboard").readOnly = true;
     document.documentElement.webkitRequestFullscreen();
     $scope.hideOverlay = true;

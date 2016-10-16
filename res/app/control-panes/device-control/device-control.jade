@@ -7,24 +7,16 @@
     .as-cell.fill-height
     .as-table.fill-height.fill-width
       .stf-vnc-navbar.as-row(ng-show='!$root.basicMode && !$root.standalone')
-        .stf-vnc-right-buttons.pull-right
+        .stf-vnc-right-buttons.pull-right(style='margin-right: 2%;')
           
           .btn-group
             label.btn-sm.btn-primary(type='button', ng-disabled='waitingForDone', ng-click='done();') Done Exploring
             .button-spacer
-            label.btn-sm.btn-danger(type='button', ng-disabled='waitingForDone', ng-click='discardSession();')
-            Discard Session 
+            label.btn-sm.btn-danger(type='button', ng-disabled='waitingForDone', ng-click='discardSession();') Discard Session 
         .stf-vnc-right-buttons.pull-left
           .btn-group
             .button-spacer
             span.device-name-text {{ phoneName }}
-            .button-spacer
-            .button-spacer
-            label.btn-sm.btn-primary(type='button', ng-disabled='loginClicked', ng-click='loginPageFoundHandler()') Login Found
-            .button-spacer
-            label.btn-sm.btn-primary(type='button', ng-disabled='signupClicked', ng-click='signupPageFoundHandler()') Signup Found
-            .button-spacer
-            label.btn-sm.btn-primary(type='button', ng-disabled='signupClicked', ng-click='searchPageFoundHandler()') Search Found
             .button-spacer
             .button-spacer
             p(style="display:inline")
