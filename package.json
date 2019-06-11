@@ -29,11 +29,10 @@
     "duplicate-arguments-array": false
   },
   "scripts": {
-    "serve": "while true; do DEBUG=adb:* sudo ./bin/stf local --public-ip='stf.zipt.design' && break; done",
-    "start": "while true; do DEBUG=adb:* sudo ./bin/stf local && break; done",
+    "serve": "while true; do DEBUG=adb:* ./bin/stf local --public-ip='stf.zipt.design' && break; done",
+    "start": "while true; do DEBUG=adb:* ./bin/stf local && break; done",
     "test": "gulp test",
-    "prepublish": "bower install && not-in-install && gulp build || in-install",
-    "postinstall": "ln -fs ../config.js config.js && ln -fs ../.env .env"
+    "prepublish": "bower install && not-in-install && gulp build || in-install"
   },
   "dependencies": {
     "@slack/client": "^3.5.4",
