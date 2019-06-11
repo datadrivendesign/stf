@@ -39,6 +39,34 @@ device-screen .positioner {
   transform: rotate(0deg);
 }
 
+.rotate {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: 100% 0%;
+  -moz-transform-origin: 100% 0%;
+  -ms-transform-origin: 100% 0%;
+  -o-transform-origin: 100% 0%;
+  transform-origin: 100% 0%;
+
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+#back-to-app-btn:hover{
+    color: #fff;
+    background-color: #00b3db;
+    border-color: #285e8e; /*set the color you want here*/
+}
+
+#back-to-app-btn {
+  border-radius: 0;
+}
+
 device-screen canvas.screen {
   position: absolute;
   width: 100%;
@@ -278,4 +306,34 @@ device-screen input {
   -o-transition: none !important;
   -ms-transition: none !important;
   transition: none !important;
+}
+
+.exitSession {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+  border-radius: 3px;
+  text-decoration: none;
+  color: white;
+  padding: .375rem 1rem;
+  float: right;
+}
+
+.remote-debug-textarea {
+  overflow: hidden;
+  word-wrap: break-word;
+  resize: none;
+  height: 31px;
+}
+
+.widget-bolder {
+  font-weight: bold;
+}
+
+.app-header {
+  color: green;
+}
+
+.submit-area.hit {
+  height: 39px;
+  padding-right: 16px;
 }

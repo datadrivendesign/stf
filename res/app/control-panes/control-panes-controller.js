@@ -1,7 +1,7 @@
 module.exports =
   function ControlPanesController($scope, $http, gettext, $routeParams,
     $timeout, $location, DeviceService, GroupService, ControlService,
-    StorageService, FatalMessageService, SettingsService) {
+    StorageService, FatalMessageService, SettingsService, socket) {
 
     var sharedTabs = [
       {
@@ -75,9 +75,8 @@ module.exports =
           return device
         })
         .catch(function() {
-          $timeout(function() {
-            $location.path('/')
-          })
+          // Ignore redirects to device page, issue warning.
+          console.error('Unable to connect to device, it may not be usable.');
         })
     }
 
@@ -91,4 +90,9 @@ module.exports =
       }
     }, true)
 
+    socket.on('warn.pii', function(message) {
+      $scope.$apply(function() {
+        $scope.flaggedWords = message.flaggedWords;
+      });
+    });
   }

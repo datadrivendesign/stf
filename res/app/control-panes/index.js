@@ -1,8 +1,12 @@
+  require('./control-panes.css')
+  require('script!jade/jade')
+
 module.exports = angular.module('control-panes', [
   require('stf/common-ui/nice-tabs').name,
   require('stf/device').name,
   require('stf/control').name,
   require('stf/scoped-hotkeys').name,
+  require('ui-bootstrap').name,
   require('./device-control').name,
   require('./advanced').name,
   require('./automation').name,
@@ -14,7 +18,10 @@ module.exports = angular.module('control-panes', [
   //require('./resources').name,
   require('./screenshots').name,
   require('./explorer').name,
-  require('./info').name
+  require('./info').name,
+  require('./messages').name,
+  require('./replay').name,
+
 ])
   .config(['$routeProvider', function($routeProvider) {
 
@@ -36,11 +43,14 @@ module.exports = angular.module('control-panes', [
       .when('/c/:serial', {
         template: require('./control-panes.pug'),
         controller: 'ControlPanesCtrl'
-      })
+      });
   }])
   .factory('ControlPanesService', require('./control-panes-service'))
+  .factory('CrowdFeedbackService', require('./crowd-feedback-service'))
   .controller('ControlPanesCtrl', require('./control-panes-controller'))
   .controller('ControlPanesNoDeviceController',
-  require('./control-panes-no-device-controller'))
+    require('./control-panes-no-device-controller'))
   .controller('ControlPanesHotKeysCtrl',
-  require('./control-panes-hotkeys-controller'))
+    require('./control-panes-hotkeys-controller'))
+  .controller('CrowdFeedbackCtrl',
+    require('./crowd-feedback-controller.js'));

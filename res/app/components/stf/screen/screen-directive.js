@@ -1,6 +1,7 @@
 var _ = require('lodash')
 var rotator = require('./rotator')
 var ImagePool = require('./imagepool')
+var imageFile = require('./imagefile')
 
 module.exports = function DeviceScreenDirective(
   $document
@@ -9,6 +10,8 @@ module.exports = function DeviceScreenDirective(
 , PageVisibilityService
 , $timeout
 , $window
+, socket
+, SequenceService
 ) {
   return {
     restrict: 'E'
@@ -25,6 +28,8 @@ module.exports = function DeviceScreenDirective(
 
       var device = scope.device()
       var control = scope.control()
+      var filterSet = [];
+      control.startLogcat(filterSet);
 
       var input = element.find('input')
 
@@ -244,16 +249,20 @@ module.exports = function DeviceScreenDirective(
 
             cachedImageWidth = img.width
             cachedImageHeight = img.height
-
+            /*
             if (options.autoScaleForRetina) {
               canvas.width = cachedImageWidth * frontBackRatio
               canvas.height = cachedImageHeight * frontBackRatio
               g.scale(frontBackRatio, frontBackRatio)
             }
             else {
-              canvas.width = cachedImageWidth
-              canvas.height = cachedImageHeight
-            }
+              */
+
+            // Removed Optimization for Retina displays, this fixes the problem that blurry streamed mobile interfaces since it is 
+            // redrawn with a different size on the canvas
+            canvas.width = cachedImageWidth;
+            canvas.height = cachedImageHeight;
+            //}
 
             cssRotation += rotator(cachedScreen.rotation, screen.rotation)
 
@@ -303,7 +312,7 @@ module.exports = function DeviceScreenDirective(
 
                 img.onload = function() {
                   updateImageArea(this)
-
+                  g.imageSmoothingEnabled = false;
                   g.drawImage(img, 0, 0, img.width, img.height)
 
                   // Try to forcefully clean everything to get rid of memory
@@ -340,7 +349,27 @@ module.exports = function DeviceScreenDirective(
               }
             }
             else if (/^start /.test(message.data)) {
-              applyQuirks(JSON.parse(message.data.substr('start '.length)))
+              var banner = {};
+
+              try{
+                banner = JSON.parse(message.data.substr('start '.length));
+              }catch(err){
+                // This shouldn't happen, but if it does, return early
+                // to avoid breaking the message queue and log the error
+                console.error('Invalid JSON in response', err.stack)
+                return;
+              }
+
+              var wsId = banner.wsId;
+              socket.setWSId(wsId);
+
+              applyQuirks(banner)
+            }
+            else if (/^nextImgId /.test(message.data)) {
+              var nextImgId = message.data.substr('nextImgId '.length);
+              imageFile.setNextImgId(nextImgId);
+              imageFile.setNextImgIdTime(new Date().getTime());
+              imageFile.setCurrentDeviceSerial(device.serial)
             }
             else if (message.data === 'secure_on') {
               scope.$apply(function() {
@@ -513,14 +542,8 @@ module.exports = function DeviceScreenDirective(
         var slots = []
         var slotted = Object.create(null)
         var fingers = []
-        var seq = -1
-        var cycle = 100
         var fakePinch = false
         var lastPossiblyBuggyMouseUpEvent = 0
-
-        function nextSeq() {
-          return ++seq >= cycle ? (seq = 0) : seq
-        }
 
         function createSlots() {
           // The reverse order is important because slots and fingers are in
@@ -602,14 +625,14 @@ module.exports = function DeviceScreenDirective(
               , screen.rotation
               )
 
-          control.touchDown(nextSeq(), 0, scaled.xP, scaled.yP, pressure)
+          control.touchDown(SequenceService.next(), 0, scaled.xP, scaled.yP, pressure)
 
           if (fakePinch) {
-            control.touchDown(nextSeq(), 1, 1 - scaled.xP, 1 - scaled.yP,
+            control.touchDown(SequenceService.next(), 1, 1 - scaled.xP, 1 - scaled.yP,
               pressure)
           }
 
-          control.touchCommit(nextSeq())
+          control.touchCommit(SequenceService.next())
 
           activateFinger(0, x, y, pressure)
 
@@ -661,19 +684,19 @@ module.exports = function DeviceScreenDirective(
               , screen.rotation
               )
 
-          control.touchMove(nextSeq(), 0, scaled.xP, scaled.yP, pressure)
+          control.touchMove(SequenceService.next(), 0, scaled.xP, scaled.yP, pressure)
 
           if (addGhostFinger) {
-            control.touchDown(nextSeq(), 1, 1 - scaled.xP, 1 - scaled.yP, pressure)
+            control.touchDown(SequenceService.next(), 1, 1 - scaled.xP, 1 - scaled.yP, pressure)
           }
           else if (deleteGhostFinger) {
-            control.touchUp(nextSeq(), 1)
+            control.touchUp(SequenceService.next(), 1)
           }
           else if (fakePinch) {
-            control.touchMove(nextSeq(), 1, 1 - scaled.xP, 1 - scaled.yP, pressure)
+            control.touchMove(SequenceService.next(), 1, 1 - scaled.xP, 1 - scaled.yP, pressure)
           }
 
-          control.touchCommit(nextSeq())
+          control.touchCommit(SequenceService.next())
 
           activateFinger(0, x, y, pressure)
 
@@ -698,13 +721,13 @@ module.exports = function DeviceScreenDirective(
           }
           e.preventDefault()
 
-          control.touchUp(nextSeq(), 0)
+          control.touchUp(SequenceService.next(), 0)
 
           if (fakePinch) {
-            control.touchUp(nextSeq(), 1)
+            control.touchUp(SequenceService.next(), 1)
           }
 
-          control.touchCommit(nextSeq())
+          control.touchCommit(SequenceService.next())
 
           deactivateFinger(0)
 
@@ -771,7 +794,7 @@ module.exports = function DeviceScreenDirective(
         }
 
         function startMousing() {
-          control.gestureStart(nextSeq())
+          control.gestureStart(SequenceService.next())
           input[0].focus()
         }
 
@@ -780,7 +803,7 @@ module.exports = function DeviceScreenDirective(
           $document.unbind('mouseup', mouseUpListener)
           $document.unbind('mouseleave', mouseUpListener)
           deactivateFingers()
-          control.gestureStop(nextSeq())
+          control.gestureStop(SequenceService.next())
         }
 
         function touchStartListener(event) {
@@ -818,7 +841,7 @@ module.exports = function DeviceScreenDirective(
               delete slotted[id]
             })
             slots.sort().reverse()
-            control.touchReset(nextSeq())
+            control.touchReset(SequenceService.next())
             deactivateFingers()
           }
 
@@ -842,7 +865,7 @@ module.exports = function DeviceScreenDirective(
                 )
 
             slotted[touch.identifier] = slot
-            control.touchDown(nextSeq(), slot, scaled.xP, scaled.yP, pressure)
+            control.touchDown(SequenceService.next(), slot, scaled.xP, scaled.yP, pressure)
             activateFinger(slot, x, y, pressure)
           }
 
@@ -850,7 +873,7 @@ module.exports = function DeviceScreenDirective(
           $document.bind('touchend', touchEndListener)
           $document.bind('touchleave', touchEndListener)
 
-          control.touchCommit(nextSeq())
+          control.touchCommit(SequenceService.next())
         }
 
         function touchMoveListener(event) {
@@ -875,11 +898,11 @@ module.exports = function DeviceScreenDirective(
                 , screen.rotation
                 )
 
-            control.touchMove(nextSeq(), slot, scaled.xP, scaled.yP, pressure)
+            control.touchMove(SequenceService.next(), slot, scaled.xP, scaled.yP, pressure)
             activateFinger(slot, x, y, pressure)
           }
 
-          control.touchCommit(nextSeq())
+          control.touchCommit(SequenceService.next())
         }
 
         function touchEndListener(event) {
@@ -900,13 +923,13 @@ module.exports = function DeviceScreenDirective(
             }
             delete slotted[touch.identifier]
             slots.push(slot)
-            control.touchUp(nextSeq(), slot)
+            control.touchUp(SequenceService.next(), slot)
             deactivateFinger(slot)
             foundAny = true
           }
 
           if (foundAny) {
-            control.touchCommit(nextSeq())
+            control.touchCommit(SequenceService.next())
             if (!e.touches.length) {
               stopTouching()
             }
@@ -914,7 +937,7 @@ module.exports = function DeviceScreenDirective(
         }
 
         function startTouching() {
-          control.gestureStart(nextSeq())
+          control.gestureStart(SequenceService.next())
         }
 
         function stopTouching() {
@@ -922,7 +945,7 @@ module.exports = function DeviceScreenDirective(
           $document.unbind('touchend', touchEndListener)
           $document.unbind('touchleave', touchEndListener)
           deactivateFingers()
-          control.gestureStop(nextSeq())
+          control.gestureStop(SequenceService.next())
         }
 
         element.on('touchstart', touchStartListener)

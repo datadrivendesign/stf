@@ -23,7 +23,9 @@ module.exports = {
       , chunkFilename: '[id].[hash].chunk.js'
     }
     , stats: {
-      colors: true
+      colors: true,
+      chunks: false,
+      assets: false
     }
     , resolve: {
       root: [
@@ -111,7 +113,9 @@ module.exports = {
     debug: true
     , devtool: 'eval'
     , stats: {
-      colors: true
+      colors: true,
+      chunks: false,
+      assets: false
     }
   }
 }

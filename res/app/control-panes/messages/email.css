@@ -1,0 +1,30 @@
+.email {
+  overflow: auto;
+}
+.email-container {
+  position: relative;
+  padding-top: 40px;
+}
+.email-empty, .email-error {
+  text-align: center;
+}
+.refresh {
+  cursor: pointer;
+  font-size: 20px;
+  position: absolute;
+  right: 9px;
+  top: 5px;
+}
+.refresh:hover {
+  color: rgb(13,122,255);
+}
+
+.text-toggle {
+  text-align: right;
+  font-size: 12px;
+  margin-top: 15px;
+}
+
+.text-toggle a {
+  cursor: pointer;
+}

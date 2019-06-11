@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    base(href='/')
+    meta(name='viewport', content='width=device-width, initial-scale=1, ' +
+    'maximum-scale=1, user-scalable=no')
+    meta(name='mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-title', content='STF')
+    meta(name='format-detection', content='telephone=no')
+    meta(name='apple-mobile-web-app-status-bar-style',
+    content='black-translucent')
+    link(href='static/logo/exports/STF-128.png', rel='apple-touch-icon')
+    link(rel="stylesheet",type="text/css",
+    href="static/bower_components/bootstrap/dist/css/bootstrap.min.css")
+
+    title CrowdSTF
+
+  body.container-fluid
+    h3
+      = 'Your input has been recorded successfully.'
+    h3
+      = 'You can close this window now.'
+    a.btn.btn-success(href='javascript:window.close();') Close

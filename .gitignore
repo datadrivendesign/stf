@@ -5,7 +5,6 @@
 *.iml
 .python-version
 /*.tgz
-/.env
 /node_modules/
 /res/bower_components/
 /res/build/
@@ -13,3 +12,9 @@
 /rethinkdb_data/
 /temp/
 /tmp/
+.eslintcache
+/screen_shots/
+config.js
+/apks/
+/apps/
+

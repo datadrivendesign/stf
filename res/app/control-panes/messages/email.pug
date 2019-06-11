@@ -1,0 +1,9 @@
+div.email-container
+  i.fa.fa-refresh.refresh(ng-click="refresh()" ng-class="{'fa-spin': fetching}")
+  uib-accordion(ng-show="emails.length" close-others="oneAtATime")
+    div.panel-default(ng-repeat="email in emails | filter:isNotSms" uib-accordion-group heading="{{email.subject}}" ng-click="email.read = true")
+      .email(ng-bind-html="(email.html && !email.forceText) ? email.html : email.text")
+      .text-toggle(ng-show="email.html && !email.forceText")
+        a(ng-click="email.forceText = true") Email displaying incorrectly? Click to display as plain text.
+  .email-empty(ng-hide="emails.length") Inbox is empty.
+  .email-error(ng-show="error") Error fetching email.

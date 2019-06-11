@@ -5,7 +5,8 @@
     "commonjs": true,
     "browser": true,
     "node": false,
-    "jasmine": true
+    "jasmine": true,
+    "es6": true
   },
   "rules": {
     // TODO: for now lets just mute them
@@ -18,7 +19,12 @@
     "new-cap": 0,
     "spaced-comment": 0,
     "quote-props": 0,
-    "operator-linebreak": 0
+    "operator-linebreak": 0,
+    "quotes": ["error", "single", {
+      "allowTemplateLiterals": true
+    }]
+
+
   },
   "globals": {
     "angular": 1,

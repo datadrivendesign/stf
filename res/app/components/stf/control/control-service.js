@@ -1,3 +1,5 @@
+var imageFile = require('../screen/imagefile')
+
 module.exports = function ControlServiceFactory(
   $upload
 , $http
@@ -6,16 +8,45 @@ module.exports = function ControlServiceFactory(
 , $rootScope
 , gettext
 , KeycodesMapped
+, UserService
+, SequenceService
 ) {
   var controlService = {
   }
 
   function ControlService(target, channel) {
+    var allowInput = true
+
     function sendOneWay(action, data) {
+      if (!allowInput) {
+        return
+      }
+
+      data.imgId = imageFile.getNextImgId()
+      data.imgReceivedTime = imageFile.getNextImgIdTime()
+      data.serial = imageFile.getCurrentDeviceSerial()
+      data.intermediateImgTimes = imageFile.getImgTimes()
+      data.timestamp = new Date().getTime()
+      data.wsId = socket.getWsId()
+      data.userEmail = UserService.currentUser.email
+      data.userGroup = UserService.currentUser.group
+      data.userIP = UserService.currentUser.ip
+      data.userLastLogin = UserService.currentUser.lastLoggedInAt
+      data.userName = UserService.currentUser.name
       socket.emit(action, channel, data)
     }
 
     function sendTwoWay(action, data) {
+      if (!allowInput && action !== 'app.reinstall' &&
+        action !== 'input.replay') {
+        return
+      }
+
+      data = data || {}
+      var hashArr = window.location.hash.split('/')
+      if (hashArr.length >= 3) {
+        data.serial = hashArr[2]
+      }
       var tx = TransactionService.create(target)
       socket.emit(action, channel, tx.channel, data)
       return tx.promise
@@ -30,6 +61,10 @@ module.exports = function ControlServiceFactory(
         }
         else {
           var mapped = fixedKey || KeycodesMapped[key]
+          if (type === 'input.keyDown' && mapped === 'enter') {
+            this.gestureStartAction(SequenceService.next(), 'enter')
+            this.gestureStopAction(SequenceService.next(), 'enter')
+          }
           if (mapped) {
             sendOneWay(type, {
               key: mapped
@@ -41,13 +76,27 @@ module.exports = function ControlServiceFactory(
 
     this.gestureStart = function(seq) {
       sendOneWay('input.gestureStart', {
-        seq: seq
+        seq
+      })
+    }
+
+    this.gestureStartAction = function(seq, action) {
+      sendOneWay('input.gestureStart', {
+        seq,
+        action
       })
     }
 
     this.gestureStop = function(seq) {
       sendOneWay('input.gestureStop', {
-        seq: seq
+        seq
+      })
+    }
+
+    this.gestureStopAction = function(seq, action) {
+      sendOneWay('input.gestureStop', {
+        seq,
+        action
       })
     }
 
@@ -291,6 +340,29 @@ module.exports = function ControlServiceFactory(
 
     this.getWifiStatus = function() {
       return sendTwoWay('wifi.get')
+    }
+
+    this.returnToApp = function() {
+      return sendTwoWay('app.return')
+    }
+
+    this.reinstallApp = function() {
+      return sendTwoWay('app.reinstall');
+    }
+
+    this.replay = function(token) {
+      return sendTwoWay('input.replay', {
+        token: token
+      })
+    }
+
+    this.toggleInput = function(newAllowInput) {
+      allowInput = newAllowInput
+    }
+
+    this.recordLastVH = function(start, stop) {
+      this.gestureStartAction(start, 'submission')
+      this.gestureStopAction(stop, 'submission')
     }
 
     window.cc = this

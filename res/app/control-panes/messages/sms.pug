@@ -1,0 +1,7 @@
+div.email-container
+  i.fa.fa-refresh.refresh(ng-click="refresh()" ng-class="{'fa-spin': fetching}")
+  uib-accordion(ng-show="smsMessages.length" close-others="oneAtATime")
+    div.panel-default(ng-repeat="sms in smsMessages | filter:isSms" uib-accordion-group heading="{{sms.subject}}" ng-click="sms.read = true")
+      .email(ng-bind-html="sms.text")
+  .email-empty(ng-hide="smsMessages.length") No messages.
+  .email-error(ng-show="error") Error fetching messages.

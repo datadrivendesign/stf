@@ -1,13 +1,16 @@
 // Message wrapper
 
+// Next id: 100
 enum MessageType {
   CopyMessage                = 33;
   DeviceIntroductionMessage  = 74;
   DeviceAbsentMessage        = 1;
   DeviceIdentityMessage      = 2;
   DeviceLogcatEntryMessage   = 3;
+  DeviceViewBridgeEntryMessage = 92;
   DeviceLogMessage           = 4;
   DeviceReadyMessage         = 5;
+  DevicePiiWarningMessage    = 96;
   DevicePresentMessage       = 6;
   DevicePropertiesMessage    = 7;
   DeviceRegisteredMessage    = 8;
@@ -48,7 +51,10 @@ enum MessageType {
   ForwardCreateMessage       = 37;
   ForwardRemoveMessage       = 38;
   LogcatStartMessage         = 39;
+  ViewBridgeStartMessage     = 93;
   LogcatStopMessage          = 40;
+  ViewBridgeStopMessage      = 94;
+  ViewBridgeGetMessage       = 95;
   BrowserOpenMessage         = 41;
   BrowserClearMessage        = 42;
   AirplaneModeEvent          = 43;
@@ -76,8 +82,11 @@ enum MessageType {
   ReverseForwardsEvent       = 72;
   FileSystemListMessage      = 81;
   FileSystemGetMessage       = 82;
-  ConnectStartedMessage      = 92;
-  ConnectStoppedMessage      = 93;
+  ReturnToAppMessage         = 97;
+  ReplayMessage              = 98;
+  ViewHashMessage            = 99;
+  ConnectStartedMessage      = 100;
+  ConnectStoppedMessage      = 101;
 }
 
 message ConnectStartedMessage {
@@ -389,6 +398,18 @@ message DeviceLogcatEntryMessage {
   required string message = 7;
 }
 
+message DevicePiiWarningMessage {
+  required string serial = 1;
+  repeated string flaggedWords = 2;
+}
+
+message DeviceViewBridgeEntryMessage {
+  required string serial = 1;
+  required double date = 2;
+  required string message = 3;
+  required string seq = 4;
+}
+
 message LogcatFilter {
   required string tag = 1;
   required uint32 priority = 2;
@@ -396,9 +417,25 @@ message LogcatFilter {
 
 message LogcatStartMessage {
   repeated LogcatFilter filters = 1;
+  optional string appId = 2;
+}
+
+message ViewBridgeStartMessage {
+  repeated LogcatFilter filters = 1;
+  optional string appId = 2;
 }
 
 message LogcatStopMessage {
+  optional string appId = 1;
+}
+
+message ViewBridgeStopMessage {
+  optional string appId = 1;
+}
+
+message ViewBridgeGetMessage {
+  optional string seq = 1;
+  required string serial = 2;
 }
 
 message LogcatApplyFiltersMessage {
@@ -417,9 +454,7 @@ message ShellKeepAliveMessage {
 }
 
 message InstallMessage {
-  required string href = 1;
-  required bool launch = 2;
-  optional string manifest = 3;
+  required string packageName = 1;
 }
 
 message UninstallMessage {
@@ -529,6 +564,18 @@ message WifiSetEnabledMessage {
 }
 
 message WifiGetStatusMessage {
+}
+
+message ReturnToAppMessage {
+  required string appId = 1;
+}
+
+message ReplayMessage {
+  // The token corresponding to the trace to replay.
+  required string token = 1;
+}
+
+message ViewHashMessage {
 }
 
 // Events, these must be kept in sync with STFService/wire.proto

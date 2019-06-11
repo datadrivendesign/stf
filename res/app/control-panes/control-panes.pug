@@ -1,18 +1,102 @@
-div(ng-controller='ControlPanesHotKeysCtrl').fill-height
-  div(ng-if='$root.basicMode || $root.standalone').fill-height
-    div.fill-height.basic-remote-control
-      .remote-control
-        div(ng-include='"control-panes/device-control/device-control-standalone.pug"').fill-height
-
+div(ng-controller='CrowdFeedbackCtrl').fill-height
   div(ng-if='!$root.basicMode && !$root.standalone')
-    div(fa-pane, pane-id='control-device', pane-anchor='west', pane-size='{{remotePaneSize}}', pane-min='200px', pane-max='100% + 2px', pane-handle='4', pane-no-toggle='false')
-
+    //- Device display
+    div(fa-pane, pane-id='control-device', pane-anchor='west', pane-size='{{ remotePaneSize }}',
+      pane-min='622px', pane-max='100% + 2px', pane-handle='4',pane-no-toggle='false')
       .remote-control
-        div(ng-include='"control-panes/device-control/device-control.pug"').fill-height
+        .fill-height(ng-include='"control-panes/device-control/device-control.pug"')
 
-    div(fa-pane, pane-id='control-bottom-tabs', pane-anchor='south', pane-size='30% + 2px', pane-handle='4').pane-bottom-p
-      .widget-container.fluid-height
-        nice-tabs(key='ControlBottomTabs', direction='below', tabs='belowTabs', filter='$root.platform')
-    div(fa-pane, pane-id='control-top-tabs', pane-anchor='')
-      .widget-container.fluid-height
-        nice-tabs(key='ControlBottomTabs', tabs='topTabs', filter='$root.platform')
+    //- Control pane
+    div.crowd-ui(fa-pane)
+      //- Remaining time
+      div.crowd-ui-section(ng-if="!isDesignerToken")
+        div.crowd-ui-section-title
+          | Time Remaining:
+          span.light-text
+            |  {{ minutes }} minutes, {{ seconds }} seconds
+
+      //- Task
+      div.crowd-ui-section(ng-if="hasTask")
+        div.crowd-ui-section-title Your Task
+        div.crowd-ui-section-text {{ taskDesc }}
+        div.crowd-ui-section-input
+          label {{ submissionInstructionalText }}
+          form(ng-if="descIsQuestion")
+            input(type="text", ng-model="taskAnswer")
+            button(ng-click="submitAnswer(taskAnswer)", ng-disabled="!taskAnswer || submittingAnswer")
+              span(ng-show="!submittingAnswer") Submit
+              span.glyphicon.glyphicon-refresh.spinning(ng-show="submittingAnswer")
+          button(ng-if="!descIsQuestion", ng-click="submitAnswer('')", ng-disabled="submittingAnswer")
+            span(ng-show="!submittingAnswer") Submit
+            span.glyphicon.glyphicon-refresh.spinning(ng-show="submittingAnswer")
+
+      //- Guide and Messages
+      div.crowd-ui-section.tabbed(ng-controller="MessagesCtrl")
+        ul.nav.nav-tabs.nav-justified.crowd-ui-section-tabs(ng-init="activeSection = 'GUIDE'")
+          li(ng-class="{ active: activeSection === 'GUIDE' }")
+            a(ng-click="activeSection = 'GUIDE'")
+              i.fa.fa-comment.color-yellow
+              span(translate='translate')
+                span Guide
+          li(ng-class="{ active: activeSection === 'EMAIL' }")
+            a(href="javascript:void(0)" ng-click="activeSection = 'EMAIL'")
+              i.fa.fa-envelope.color-red
+              span(translate='translate')
+                span Email
+                span(ng-show="countUnreadEmails()") &nbsp;({{ countUnreadEmails() }})
+          li(ng-class="{ active: activeSection === 'SMS' }")
+            a(ng-click="activeSection = 'SMS'")
+              i.fa.fa-phone.color-green
+              span(translate='translate')
+                span SMS
+                span(ng-show="countUnreadSms()") &nbsp;({{ countUnreadSms() }})
+
+        .crowd-ui-section-tab-content
+          div(ng-show="activeSection === 'GUIDE'")
+            div.crowd-ui-section-tab-text
+              | First try to login/signup using Google or Facebook or with:
+              ul.crowd-ui-user-creds
+                li
+                  b Email:
+                  |  {{ loginInfo.gmail.username }}
+                li
+                  b Password:
+                  |  {{ loginInfo.gmail.password }} or {{ loginInfo.gmail.password.toLowerCase() }}
+            div.crowd-ui-section-tab-text
+              | If that does not work, create a new account with the following info (as needed):
+              ul.crowd-ui-user-creds
+                li
+                  b Name:
+                  |  {{ loginInfo.gmail.name }}
+                li
+                  b Email:
+                  |  {{ loginInfo.gmail.username }}
+                li
+                  b Password:
+                  |  {{ loginInfo.gmail.password }}
+                li
+                  b Phone Number:
+                  |  {{ loginInfo.sms }}
+                li
+                  b Location:
+                  |  San Francisco, CA, USA
+                li
+                  b ZIP Code:
+                  |  94101
+                li
+                  b Date of Birth:
+                  |  {{ loginInfo.accountInfo.birthday }}
+            div.crowd-ui-section-tab-text
+              | For verification email or SMS, check the Email and SMS tabs on the top right.
+              br
+              | Use your computer keyboard to enter text. Avoid the Android keyboard as much as possible.
+            div.crowd-ui-section-tab-text
+              | If the app does not launch (or stops responding to your clicks), refresh the page and wait 10-15 seconds. Try this three times and if it still doesn't show an app, please click Submit and send us an email.
+            div.crowd-ui-section-tab-text Please email
+              a(href='mailto:{{contactEmail}}')
+                = ' {{ contactEmail }} '
+              | if you encounter any errors or have any questions.
+            div.crowd-ui-section-tab-text.color-red
+              | No matter what happens, do not enter your personal details (email, phone number, location etc.)
+          div(ng-show="activeSection === 'EMAIL'" ng-include="'control-panes/messages/email.pug'")
+          div(ng-show="activeSection === 'SMS'" ng-include="'control-panes/messages/sms.pug'")
