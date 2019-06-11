@@ -2,19 +2,19 @@ var _ = require('lodash')
 
 var filterOps = {
   '<': function(a, filterValue) {
-    return a < filterValue
+    return a !== null && a < filterValue
   }
-  , '<=': function(a, filterValue) {
-    return a <= filterValue
+, '<=': function(a, filterValue) {
+    return a !== null && a <= filterValue
   }
-  , '>': function(a, filterValue) {
-    return a > filterValue
+, '>': function(a, filterValue) {
+    return a !== null && a > filterValue
   }
-  , '>=': function(a, filterValue) {
-    return a >= filterValue
+, '>=': function(a, filterValue) {
+    return a !== null && a >= filterValue
   }
-  , '=': function(a, filterValue) {
-    return a === filterValue
+, '=': function(a, filterValue) {
+    return a !== null && a === filterValue
   }
 }
 
@@ -58,14 +58,14 @@ module.exports = function DeviceColumnService($filter, gettext) {
       }
     , compare: function(deviceA, deviceB) {
         var va = (deviceA.version || '0').split('.')
-          , vb = (deviceB.version || '0').split('.')
-          , la = va.length
-          , lb = vb.length
+        var vb = (deviceB.version || '0').split('.')
+        var la = va.length
+        var lb = vb.length
 
         for (var i = 0, l = Math.max(la, lb); i < l; ++i) {
           var a = i < la ? parseInt(va[i], 10) : 0
-            , b = i < lb ? parseInt(vb[i], 10) : 0
-            , diff = a - b
+          var b = i < lb ? parseInt(vb[i], 10) : 0
+          var diff = a - b
 
           // One of the values might be something like 'M'. If so, do a string
           // comparison instead.
@@ -82,10 +82,10 @@ module.exports = function DeviceColumnService($filter, gettext) {
       }
     , filter: function(device, filter) {
         var va = (device.version || '0').split('.')
-          , vb = (filter.query || '0').split('.')
-          , la = va.length
-          , lb = vb.length
-          , op = filterOps[filter.op || '=']
+        var vb = (filter.query || '0').split('.')
+        var la = va.length
+        var lb = vb.length
+        var op = filterOps[filter.op || '=']
 
         // We have a single value and no operator or field. It matches
         // too easily, let's wait for a dot (e.g. '5.'). An example of a
@@ -106,7 +106,7 @@ module.exports = function DeviceColumnService($filter, gettext) {
 
         for (var i = 0, l = Math.min(la, lb); i < l; ++i) {
           var a = parseInt(va[i], 10)
-            , b = parseInt(vb[i], 10)
+          var b = parseInt(vb[i], 10)
 
           // One of the values might be non-numeric, e.g. 'M'. In that case
           // filter by string value instead.
@@ -128,7 +128,19 @@ module.exports = function DeviceColumnService($filter, gettext) {
   , network: TextCell({
       title: gettext('Network')
     , value: function(device) {
-        return device.phone ? device.phone.network : ''
+        if (!device.network) {
+          return ''
+        }
+
+        if (!device.network.connected) {
+          return ''
+        }
+
+        if (device.network.subtype) {
+          return (device.network.type + ' (' + device.network.subtype + ')').toUpperCase()
+        }
+
+        return (device.network.type || '').toUpperCase()
       }
     })
   , display: TextCell({
@@ -171,13 +183,28 @@ module.exports = function DeviceColumnService($filter, gettext) {
       title: gettext('SDK')
     , defaultOrder: 'desc'
     , value: function(device) {
-        return device.sdk || ''
+        return device.sdk
+      }
+    , format: function(value) {
+        return value || ''
       }
     })
   , abi: TextCell({
       title: gettext('ABI')
     , value: function(device) {
         return device.abi || ''
+      }
+    })
+  , cpuPlatform: TextCell({
+      title: gettext('CPU Platform')
+    , value: function(device) {
+        return device.cpuPlatform || ''
+      }
+    })
+  , openGLESVersion: TextCell({
+      title: gettext('OpenGL ES version')
+    , value: function(device) {
+        return device.openGLESVersion || ''
       }
     })
   , phone: TextCell({
@@ -190,6 +217,12 @@ module.exports = function DeviceColumnService($filter, gettext) {
       title: gettext('Phone IMEI')
     , value: function(device) {
         return device.phone ? device.phone.imei : ''
+      }
+    })
+  , imsi: TextCell({
+      title: gettext('Phone IMSI')
+    , value: function(device) {
+        return device.phone ? device.phone.imsi : ''
       }
     })
   , iccid: TextCell({
@@ -222,28 +255,24 @@ module.exports = function DeviceColumnService($filter, gettext) {
           : ''
       }
     })
-  , batteryLevel: TextCell({
+  , batteryLevel: NumberCell({
       title: gettext('Battery Level')
     , value: function(device) {
         return device.battery
-          ? Math.floor(device.battery.level / device.battery.scale * 100) + '%'
-          : ''
+          ? Math.floor(device.battery.level / device.battery.scale * 100)
+          : null
       }
-    , compare: function(deviceA, deviceB) {
-        var va = deviceA.battery ? deviceA.battery.level : 0
-          , vb = deviceB.battery ? deviceB.battery.level : 0
-        return va - vb
+    , format: function(value) {
+        return value === null ? '' : value + '%'
       }
     })
-  , batteryTemp: TextCell({
+  , batteryTemp: NumberCell({
       title: gettext('Battery Temp')
     , value: function(device) {
-        return device.battery ? device.battery.temp + '°C' : ''
+        return device.battery ? device.battery.temp : null
       }
-    , compare: function(deviceA, deviceB) {
-        var va = deviceA.battery ? deviceA.battery.temp : 0
-          , vb = deviceB.battery ? deviceB.battery.temp : 0
-        return va - vb
+    , format: function(value) {
+        return value === null ? '' : value + '°C'
       }
     })
   , provider: TextCell({
@@ -277,27 +306,36 @@ function zeroPadTwoDigit(digit) {
 
 function compareIgnoreCase(a, b) {
   var la = (a || '').toLowerCase()
-    , lb = (b || '').toLowerCase()
-  return la === lb ? 0 : (la < lb ? -1 : 1)
+  var lb = (b || '').toLowerCase()
+  if (la === lb) {
+    return 0
+  }
+  else {
+    return la < lb ? -1 : 1
+  }
 }
 
 function filterIgnoreCase(a, filterValue) {
   var va = (a || '').toLowerCase()
-    , vb = filterValue.toLowerCase()
+  var vb = filterValue.toLowerCase()
   return va.indexOf(vb) !== -1
 }
 
 function compareRespectCase(a, b) {
-  return a === b ? 0 : (a < b ? -1 : 1)
+  if (a === b) {
+    return 0
+  }
+  else {
+    return a < b ? -1 : 1
+  }
 }
-
 
 
 function TextCell(options) {
   return _.defaults(options, {
     title: options.title
   , defaultOrder: 'asc'
-  , build: function () {
+  , build: function() {
       var td = document.createElement('td')
       td.appendChild(document.createTextNode(''))
       return td
@@ -320,24 +358,26 @@ function NumberCell(options) {
   return _.defaults(options, {
     title: options.title
   , defaultOrder: 'asc'
-  , build: function () {
+  , build: function() {
       var td = document.createElement('td')
       td.appendChild(document.createTextNode(''))
       return td
     }
   , update: function(td, item) {
       var t = td.firstChild
-      t.nodeValue = options.value(item)
+      t.nodeValue = options.format(options.value(item))
       return td
     }
   , compare: function(a, b) {
-      return options.value(a) - options.value(b)
+      var va = options.value(a) || 0
+      var vb = options.value(b) || 0
+      return va - vb
     }
   , filter: (function() {
       return function(item, filter) {
         return filterOps[filter.op || '='](
           options.value(item)
-        , +filter.query
+        , Number(filter.query)
         )
       }
     })()
@@ -348,14 +388,14 @@ function DateCell(options) {
   return _.defaults(options, {
     title: options.title
   , defaultOrder: 'desc'
-  , build: function () {
+  , build: function() {
       var td = document.createElement('td')
       td.appendChild(document.createTextNode(''))
       return td
     }
   , update: function(td, item) {
       var t = td.firstChild
-        , date = options.value(item)
+      var date = options.value(item)
       if (date) {
         t.nodeValue = date.getFullYear()
           + '-'
@@ -370,7 +410,7 @@ function DateCell(options) {
     }
   , compare: function(a, b) {
       var va = options.value(a) || 0
-        , vb = options.value(b) || 0
+      var vb = options.value(b) || 0
       return va - vb
     }
   , filter: (function() {
@@ -381,8 +421,8 @@ function DateCell(options) {
       }
       return function(item, filter) {
         var filterDate = new Date(filter.query)
-          , va = dateNumber(options.value(item))
-          , vb = dateNumber(filterDate)
+        var va = dateNumber(options.value(item))
+        var vb = dateNumber(filterDate)
         return filterOps[filter.op || '='](va, vb)
       }
     })()
@@ -393,17 +433,17 @@ function LinkCell(options) {
   return _.defaults(options, {
     title: options.title
   , defaultOrder: 'asc'
-  , build: function () {
+  , build: function() {
       var td = document.createElement('td')
-        , a = document.createElement('a')
+      var a = document.createElement('a')
       a.appendChild(document.createTextNode(''))
       td.appendChild(a)
       return td
     }
   , update: function(td, item) {
       var a = td.firstChild
-        , t = a.firstChild
-        , href = options.link(item)
+      var t = a.firstChild
+      var href = options.link(item)
       if (href) {
         a.setAttribute('href', href)
       }
@@ -429,22 +469,22 @@ function DeviceBrowserCell(options) {
   , defaultOrder: 'asc'
   , build: function() {
       var td = document.createElement('td')
-        , span = document.createElement('span')
+      var span = document.createElement('span')
       span.className = 'device-browser-list'
       td.appendChild(span)
       return td
     }
   , update: function(td, device) {
       var span = td.firstChild
-        , browser = options.value(device)
-        , apps = browser.apps.slice().sort(function(appA, appB) {
+      var browser = options.value(device)
+      var apps = browser.apps.slice().sort(function(appA, appB) {
             return compareIgnoreCase(appA.name, appB.name)
           })
 
       for (var i = 0, l = apps.length; i < l; ++i) {
         var app = apps[i]
-          , img = span.childNodes[i] || span.appendChild(document.createElement('img'))
-          , src = '/static/app/browsers/icon/36x36/' + (app.type || '_default') + '.png'
+        var img = span.childNodes[i] || span.appendChild(document.createElement('img'))
+        var src = '/static/app/browsers/icon/36x36/' + (app.type || '_default') + '.png'
 
         // Only change if necessary so that we don't trigger a download
         if (img.getAttribute('src') !== src) {
@@ -477,8 +517,8 @@ function DeviceModelCell(options) {
   , defaultOrder: 'asc'
   , build: function() {
       var td = document.createElement('td')
-        , span = document.createElement('span')
-        , image = document.createElement('img')
+      var span = document.createElement('span')
+      var image = document.createElement('img')
       span.className = 'device-small-image'
       image.className = 'device-small-image-img pointer'
       span.appendChild(image)
@@ -488,9 +528,9 @@ function DeviceModelCell(options) {
     }
   , update: function(td, device) {
       var span = td.firstChild
-        , image = span.firstChild
-        , t = span.nextSibling
-        , src = '/static/app/devices/icon/x24/' +
+      var image = span.firstChild
+      var t = span.nextSibling
+      var src = '/static/app/devices/icon/x24/' +
             (device.image || '_default.jpg')
 
       // Only change if necessary so that we don't trigger a download
@@ -517,14 +557,14 @@ function DeviceNameCell(options) {
   , defaultOrder: 'asc'
   , build: function() {
       var td = document.createElement('td')
-        , a = document.createElement('a')
+      var a = document.createElement('a')
       a.appendChild(document.createTextNode(''))
       td.appendChild(a)
       return td
     }
   , update: function(td, device) {
       var a = td.firstChild
-        , t = a.firstChild
+      var t = a.firstChild
 
       if (device.using) {
         a.className = 'device-product-name-using'
@@ -562,6 +602,7 @@ function DeviceStatusCell(options) {
   , preparing: 'state-preparing btn-primary-outline btn-success-outline'
   , unauthorized: 'state-unauthorized btn-danger-outline'
   , offline: 'state-offline btn-warning-outline'
+  , automation: 'state-automation btn-info'
   }
 
   return _.defaults(options, {
@@ -569,14 +610,14 @@ function DeviceStatusCell(options) {
   , defaultOrder: 'asc'
   , build: function() {
       var td = document.createElement('td')
-        , a = document.createElement('a')
+      var a = document.createElement('a')
       a.appendChild(document.createTextNode(''))
       td.appendChild(a)
       return td
     }
   , update: function(td, device) {
       var a = td.firstChild
-        , t = a.firstChild
+      var t = a.firstChild
 
       a.className = 'btn btn-xs device-status ' +
         (stateClasses[device.state] || 'btn-default-outline')
@@ -595,6 +636,7 @@ function DeviceStatusCell(options) {
   , compare: (function() {
       var order = {
         using: 10
+      , automation: 15
       , available: 20
       , busy: 30
       , ready: 40
@@ -618,10 +660,10 @@ function DeviceNoteCell(options) {
   return _.defaults(options, {
     title: options.title
   , defaultOrder: 'asc'
-  , build: function () {
+  , build: function() {
       var td = document.createElement('td')
-        , span = document.createElement('span')
-        , i = document.createElement('i')
+      var span = document.createElement('span')
+      var i = document.createElement('i')
 
       td.className = 'device-note'
       span.className = 'xeditable-wrapper'
@@ -636,7 +678,7 @@ function DeviceNoteCell(options) {
     }
   , update: function(td, item) {
       var span = td.firstChild
-        , t = span.firstChild
+      var t = span.firstChild
 
       t.nodeValue = options.value(item)
       return td

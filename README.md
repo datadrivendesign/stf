@@ -1,24 +1,53 @@
 <img src="res/common/logo/exports/STF-128.png?raw=true" style="width:100px;height:100px;" alt="STF">
 
 [![Build Status](https://travis-ci.org/openstf/stf.svg?branch=master)](https://travis-ci.org/openstf/stf)
-[![Docker Repository on Quay.io](https://quay.io/repository/openstf/stf/status "Docker Repository on Quay.io")](https://quay.io/repository/openstf/stf)
+[![Docker Pulls](https://img.shields.io/docker/pulls/openstf/stf.svg)](https://hub.docker.com/r/openstf/stf/)
 [![NPM version](https://img.shields.io/npm/v/stf.svg)](https://www.npmjs.com/package/stf)
-
+[![Backers on Open Collective](https://opencollective.com/openstf/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/openstf/sponsors/badge.svg)](#sponsors)
 
 **STF** (or Smartphone Test Farm) is a web application for debugging smartphones, smartwatches and other gadgets remotely, from the comfort of your browser.
 
-It is currently being used at [CyberAgent](https://www.cyberagent.co.jp/en/) to control a growing collection of more than 160 devices.
+STF was originally developed at [CyberAgent](https://www.cyberagent.co.jp/en/) to control a growing collection of more than 160 devices. As of July 2016 development is mainly sponsored by [HeadSpin](https://performance.headspin.io/) and [other individual contributors](https://opencollective.com/openstf).
+
+We  welcome financial contributions in full transparency on our [open collective](https://opencollective.com/openstf).
 
 ![Close-up of device shelf](doc/shelf_closeup_790x.jpg?raw=true)
 
 ![Super short screencast showing usage](doc/7s_usage.gif?raw=true)
 
+## Credits
+
+### Sponsors
+
+Thank you to all our sponsors! (please ask your company to also support this open source project by [becoming a sponsor](https://opencollective.com/openstf#sponsor))
+
+#### Gold Sponsor
+
+[<img src="doc/sponsors/headspin-wordmark-orange.png?raw=true" alt="HeadSpin" width="400">](https://headspin.io/)
+
+> [HeadSpin](https://headspin.io/) provides secure and scalable STF for iOS integrated with Appium/XCTest/Selenium/Espresso, High speed interaction Audio/Video/Game testing and AI based Root cause analysis for Performance Management. It's free to start using HeadSpin in 150+ locations worldwide! [Try it out for free.](https://ui-dev.headspin.io/signup/23feaa95fec34c49a1da309380807795)
+
+HeadSpin offers a generous monthly contribution towards STF development.
+
+### Contributors
+Thank you to all the people who have already contributed to STF!
+<a href="../../graphs/contributors"><img src="https://opencollective.com/openstf/contributors.svg?width=890" /></a>
+
+### Backers
+Thank you to all our backers! [[Become a backer](https://opencollective.com/openstf#backer)]
+
+<a href="https://opencollective.com/openstf#backers" target="_blank"><img src="https://opencollective.com/openstf/backers.svg?width=890"></a>
+
+
+### How to become a sponsor
+
+Please use our [open collective](https://opencollective.com/openstf#sponsor) or [contact us][contact-link] directly for sponsor arrangements. Both recurring and one-time contributions are most welcome. Contributions towards a specific issue or feature are also possible, and can be attributed to your company in our release notes and other related materials. Hardware-only contributions, whether new or used, are also extremely helpful and well received, especially if you find a device that doesn't work. Please see our [donation transparency report](DONATION-TRANSPARENCY.md) for past hardware contributions.
+
 ## Features
 
 * OS support
   - Android
-    * Supports versions 2.3.3 (SDK level 10) to 6.0 (SDK level 23)
-      - **Note: build from master for 6.0 support until 1.1.0 is out.**
+    * Supports versions 2.3.3 (SDK level 10) to 9.0 (SDK level 28)
     * Supports Wear 5.1 (but not 5.0 due to missing permissions)
     * Supports Fire OS, CyanogenMod, and other heavily Android based distributions
     * `root` is **not** required for any current functionality
@@ -44,6 +73,7 @@ It is currently being used at [CyberAgent](https://www.cyberagent.co.jp/en/) to 
     * Run any `adb` command locally, including shell access
     * [Android Studio](http://developer.android.com/tools/studio/index.html) and other IDE support, debug your app while watching the device screen on your browser
     * Supports [Chrome remote debug tools](https://developer.chrome.com/devtools/docs/remote-debugging)
+  - File Explorer to access device file system
   - Experimental VNC support (work in progress)
 * Manage your device inventory
   - See which devices are connected, offline/unavailable (indicating a weak USB connection), unauthorized or unplugged
@@ -54,28 +84,23 @@ It is currently being used at [CyberAgent](https://www.cyberagent.co.jp/en/) to 
   - Rudimentary Play Store account management
     * List, remove and add new accounts (adding may not work on all devices)
   - Display hardware specs
+* Simple REST [API](doc/API.md)
 
 ## Status
 
-STF is in continued, active development, but as of late 2015 the team is operating mostly on their private time and funds. While normal for many open source projects, STF is quite heavy on the hardware side, and is therefore somewhat of a money sink. [Contact us][contact-link] if you'd like to support future development or even become our next sponsor.
+STF is in continued, active development, but development is still largely funded by individual team members and their unpaid free time, leading to slow progress. While normal for many open source projects, STF is quite heavy on the hardware side, and is therefore somewhat of a money sink. See [how to become a sponsor](#how-to-become-a-sponsor) if you or your company would like to support future development.
 
-We're also actively working to expand the team. Welcome **@vbanthia** as our newest full contributor!
+We're also actively working to expand the team, don't be afraid to ask if you're interested.
 
 ### Short term goals
 
 Here are some things we are planning to address ASAP.
 
-1. Properly expose the new VNC functionality in the UI
-2. Release 1.1.0 so that we have stable version with Android 6.0 support
-3. Implement a basic REST API for programmatically using devices
-4. Properly reset user data between uses (Android 4.0+)
-5. Automated scheduled restarts for devices
-
-### Sponsors wanted
-
-Is your company (or you!) a heavy user of STF? Consider becoming a hardware sponsor. If you find a device that doesn't work, or would simply like to ensure support for a new model, [send it to us][contact-link]! While we can't guarantee a fix, we can promise that someone will take a detailed look into what's going on with your device, and fix it when possible. For difficult cases you may need to use our [consulting services](#consulting-services) instead.
-
-You can also sponsor a feature or bug fix and get it attributed to you or your company in the release notes.
+1. Performance
+2. Properly expose the new VNC functionality in the UI
+3. Properly reset user data between uses (Android 4.0+)
+4. Automated scheduled restarts for devices
+5. More!
 
 ### Consulting services
 
@@ -89,9 +114,9 @@ As the product has evolved from an internal tool running in our internal network
 
 ## Requirements
 
-* [Node.js](https://nodejs.org/) >= 0.12
+* [Node.js](https://nodejs.org/) >= 6.9 (latest stable version preferred)
 * [ADB](http://developer.android.com/tools/help/adb.html) properly set up
-* [RethinkDB](http://rethinkdb.com/) >= 2.0.0
+* [RethinkDB](http://rethinkdb.com/) >= 2.2
 * [GraphicsMagick](http://www.graphicsmagick.org/) (for resizing screenshots)
 * [ZeroMQ](http://zeromq.org/) libraries installed
 * [Protocol Buffers](https://github.com/google/protobuf) libraries installed
@@ -100,7 +125,7 @@ As the product has evolved from an internal tool running in our internal network
 
 Note that you need these dependencies even if you've installed STF directly from [NPM](https://www.npmjs.com/), because they can't be included in the package.
 
-On OS X, you can use [homebrew](http://brew.sh/) to install most of the dependencies:
+On Mac OS, you can use [homebrew](http://brew.sh/) to install most of the dependencies:
 
 ```bash
 brew install rethinkdb graphicsmagick zeromq protobuf yasm pkg-config
@@ -112,7 +137,7 @@ We also provide a [Docker](http://docker.com/) container in the [Docker Hub](htt
 
 You should now be ready to [build](#building) or [run](#running) STF.
 
-Note that while OS X can be used for development, it doesn't provide a very reliable experience in production due to (presumed) bugs in ADB's OS X implementation. We use [CoreOS](https://coreos.com/) but any Linux or BSD distribution should do fine.
+Note that while Mac OS can be used for development, it doesn't provide a very reliable experience in production due to (presumed) bugs in ADB's Mac OS implementation. We use [CoreOS](https://coreos.com/) but any Linux or BSD distribution should do fine.
 
 ## Installation
 
@@ -154,6 +179,8 @@ If you don't have RethinkDB set up yet, to start it up, go to the folder where y
 rethinkdb
 ```
 
+_Note: if it takes a long time for RethinkDB to start up, you may be running into [rethinkdb/rethinkdb#4600](https://github.com/rethinkdb/rethinkdb/issues/4600) (or [rethinkdb/rethinkdb#6047](https://github.com/rethinkdb/rethinkdb/issues/6047)). This usually happens on macOS Sierra. To fix this on macOS, first run `scutil --get HostName` to check if the HostName variable is unset. RethinkDB needs it to generate a server name for your instance. If you find that it's empty, running `sudo scutil --set HostName $(hostname)` has been confirmed to fix the issue on at least one occasion. See the issues for more complete solutions._
+
 You should now have RethinkDB running locally. Running the command again in the same folder will reuse the data from the previous session.
 
 You're now ready to start up STF itself:
@@ -184,11 +211,11 @@ Yes, see [DEPLOYMENT.md](doc/DEPLOYMENT.md) and [Setup Examples](https://github.
 
 ### Will I have to change battery packs all the time?
 
-Nope, we've had many devices running since the initial prototype phase about two years ago, and we've only had a single incident so far. The battery expanded causing the casing to split from the seams. The device itself was working fine and reporting full battery health, but it was discarded due to safety reasons.
+No, not all the time. Aside from a single early failure we had within only a few months, all of our devices were doing fine for about two years. However, having reached the 2-3 year mark, several devices have started to experience visibly expanded batteries. Expanded batteries should be replaced as soon as possible. Note that this issue isn't specific to STF, it's just what happens over time. You should be prepared to replace the batteries every now and then. In any case, we consider 2 years per battery pack to be fairly good value for a device lab.
 
-Devices should be allowed to turn their screens off when idle, which is what we are doing. All of our devices report perfect battery health so far.
+You should set up your devices so that the display is allowed to turn off entirely after a short timeout. 30 seconds or so should do just fine, STF will wake it up when necessary. Otherwise you risk reducing the lifetime of your device.
 
-Note that you may have a problem if your USB hubs are unable to both provide enough power and support the data connection at the same time. This can cause a device to stop charging when being used, resulting in many charging cycles. If this happens you will just need to [get a better USB hub](#recommended-hardware).
+Note that you may have a problem if your USB hubs are unable to both provide enough power for charging and support a data connection at the same time (data connections require power, too). This can cause a device to stop charging when being used, resulting in many charging cycles. If this happens you will just need to [get a better USB hub](#recommended-hardware).
 
 ### Is the system secure?
 
@@ -245,7 +272,7 @@ There can be various reasons for this behavior. Some especially common reasons a
 * USB debugging is not enabled
   - Enable it.
 * USB debugging is enabled but the USB connection mode is wrong
-  - Try switching between MTP and PTP modes and see if the device appears. This happens fairly often on OS X but almost never on Linux.
+  - Try switching between MTP and PTP modes and see if the device appears. This happens fairly often on Mac OS but almost never on Linux.
 * You don't have the ADB daemon running
   - Make sure ADB is running with `adb start-server`.
 * You haven't authorized the ADB key yet
@@ -286,8 +313,8 @@ Again, there can be various reasons for this behavior as well. Some common reaso
   - Can't help with that.
 * Someone removed the device physically.
   - Or that.
-* You're on OS X
-  - There's a bug in ADB's OS X implementation that causes devices to be lost on error conditions. The problem is more pronounced when using USB hubs. You have to unplug and then plug it back in again.
+* You're on Mac OS
+  - There's a bug in ADB's Mac OS implementation that causes devices to be lost on error conditions. The problem is more pronounced when using USB hubs. You have to unplug and then plug it back in again.
 * The USB hub broke
   - Happens. Just try a new one.
 
@@ -392,6 +419,11 @@ It will do the following:
 4. Pull from Transifex all `po` translations.
 5. Compile all `po` files to `json`.
 
+Then in order to add it officially (only needs to be done once):
+
+1. Add the language to `res/common/lang/langs.json`.
+2. Pull the specific language `tx pull -l <lang>`.
+3. Run `gulp translate`.
 
 ## Testing
 
@@ -405,6 +437,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 See [LICENSE](LICENSE).
 
-Copyright © CyberAgent, Inc. All Rights Reserved.
+Copyright © 2017 The OpenSTF Project. All Rights Reserved.
 
 [contact-link]: mailto:contact@openstf.io

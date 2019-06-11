@@ -198,19 +198,6 @@ device-screen input {
   display: inline-block;
 }
 
-
-/* Erik: Our custom css rules to cover up the menu control buttons */
-.stf-vnc-bottom .cover-menu-buttons {
-  position: absolute;
-  bottom: 0;
-}
-
-.stf-vnc-bottom .cover-menu-buttons .btn {
-  padding: 14px;
-}
-/* End custom rules */
-
-
 /* VNC buttons */
 .stf-vnc-bottom .btn-primary:hover {
   background: rgba(255, 255, 255, 1.0);

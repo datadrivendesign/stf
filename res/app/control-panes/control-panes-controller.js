@@ -1,37 +1,37 @@
 module.exports =
-  function ControlPanesController ($scope, $http, gettext, $routeParams,
+  function ControlPanesController($scope, $http, gettext, $routeParams,
     $timeout, $location, DeviceService, GroupService, ControlService,
-    StorageService, FatalMessageService, SettingsService, TappSessionService) {
+    StorageService, FatalMessageService, SettingsService) {
 
     var sharedTabs = [
       {
         title: gettext('Screenshots'),
         icon: 'fa-camera color-skyblue',
-        templateUrl: 'control-panes/screenshots/screenshots.jade',
+        templateUrl: 'control-panes/screenshots/screenshots.pug',
         filters: ['native', 'web']
       },
       {
         title: gettext('Automation'),
         icon: 'fa-road color-lila',
-        templateUrl: 'control-panes/automation/automation.jade',
+        templateUrl: 'control-panes/automation/automation.pug',
         filters: ['native', 'web']
       },
       {
         title: gettext('Advanced'),
         icon: 'fa-bolt color-brown',
-        templateUrl: 'control-panes/advanced/advanced.jade',
+        templateUrl: 'control-panes/advanced/advanced.pug',
         filters: ['native', 'web']
       },
       {
         title: gettext('File Explorer'),
         icon: 'fa-folder-open color-blue',
-        templateUrl: 'control-panes/explorer/explorer.jade',
+        templateUrl: 'control-panes/explorer/explorer.pug',
         filters: ['native', 'web']
       },
       {
         title: gettext('Info'),
         icon: 'fa-info color-orange',
-        templateUrl: 'control-panes/info/info.jade',
+        templateUrl: 'control-panes/info/info.pug',
         filters: ['native', 'web']
       }
     ]
@@ -40,7 +40,7 @@ module.exports =
       {
         title: gettext('Dashboard'),
         icon: 'fa-dashboard fa-fw color-pink',
-        templateUrl: 'control-panes/dashboard/dashboard.jade',
+        templateUrl: 'control-panes/dashboard/dashboard.pug',
         filters: ['native', 'web']
       }
     ].concat(angular.copy(sharedTabs))
@@ -49,7 +49,7 @@ module.exports =
       {
         title: gettext('Logs'),
         icon: 'fa-list-alt color-red',
-        templateUrl: 'control-panes/logs/logs.jade',
+        templateUrl: 'control-panes/logs/logs.pug',
         filters: ['native', 'web']
       }
     ].concat(angular.copy(sharedTabs))
@@ -57,25 +57,15 @@ module.exports =
     $scope.device = null
     $scope.control = null
 
-    console.log('$scope', $scope)
-    console.log('Setting sessionId to', $routeParams.sessionId)
-    $scope.sessionId = $routeParams.sessionId;
-    TappSessionService.sessionId = $routeParams.sessionId;
-    TappSessionService.serial = $routeParams.serial;
-    console.log('sessionId is', TappSessionService.sessionId)
-    if (!$scope.sessionId) {
-      alert('No sessionId found, events will not be recorded');
-    }
-
     // TODO: Move this out to Ctrl.resolve
-    function getDevice (serial) {
-      return DeviceService.get(serial, $scope)
-        .then(function (device) {
+    function getDevice(serial) {
+      DeviceService.get(serial, $scope)
+        .then(function(device) {
           return GroupService.invite(device)
         })
-        .then(function (device) {
+        .then(function(device) {
           $scope.device = device
-          $scope.control = ControlService.create(device, device.channel, $scope.sessionId)
+          $scope.control = ControlService.create(device, device.channel)
 
           // TODO: Change title, flickers too much on Chrome
           // $rootScope.pageTitle = device.name
@@ -84,8 +74,8 @@ module.exports =
 
           return device
         })
-        .catch(function () {
-          $timeout(function () {
+        .catch(function() {
+          $timeout(function() {
             $location.path('/')
           })
         })
@@ -93,7 +83,7 @@ module.exports =
 
     getDevice($routeParams.serial)
 
-    $scope.$watch('device.state', function (newValue, oldValue) {
+    $scope.$watch('device.state', function(newValue, oldValue) {
       if (newValue !== oldValue) {
         if (oldValue === 'using') {
           FatalMessageService.open($scope.device, false)

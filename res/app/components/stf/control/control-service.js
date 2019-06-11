@@ -5,31 +5,17 @@ module.exports = function ControlServiceFactory(
 , TransactionService
 , $rootScope
 , gettext
-, KeycodesMapped,
-TappSessionService
+, KeycodesMapped
 ) {
   var controlService = {
   }
 
-  function ControlService(target, channel, sessionId) {
-
-    // Erik: We intercept socket events and attach our sessionId so the backend
-    // knows who needs an XML request.
-    function addSessionId (data) {
-      if (data) {
-        data.sessionId = sessionId;
-        data.imgCount = TappSessionService.imgCount;
-      }
-      return data;
-    }
-
+  function ControlService(target, channel) {
     function sendOneWay(action, data) {
-      data = addSessionId(data);
       socket.emit(action, channel, data)
     }
 
     function sendTwoWay(action, data) {
-      data = addSessionId(data);
       var tx = TransactionService.create(target)
       socket.emit(action, channel, tx.channel, data)
       return tx.promise
@@ -85,32 +71,33 @@ TappSessionService
       })
     }
 
-    this.touchUp   = function(seq, contact) {
+    this.touchUp = function(seq, contact) {
       sendOneWay('input.touchUp', {
         seq: seq
       , contact: contact
       })
     }
 
-    this.touchCommit   = function(seq) {
+    this.touchCommit = function(seq) {
       sendOneWay('input.touchCommit', {
         seq: seq
       })
     }
 
-    this.touchReset   = function(seq) {
+    this.touchReset = function(seq) {
       sendOneWay('input.touchReset', {
         seq: seq
       })
     }
 
-    this.keyDown   = keySender('input.keyDown')
-    this.keyUp     = keySender('input.keyUp')
-    this.keyPress  = keySender('input.keyPress')
+    this.keyDown = keySender('input.keyDown')
+    this.keyUp = keySender('input.keyUp')
+    this.keyPress = keySender('input.keyPress')
 
     this.home = keySender('input.keyPress', 'home')
     this.menu = keySender('input.keyPress', 'menu')
     this.back = keySender('input.keyPress', 'back')
+    this.appSwitch = keySender('input.keyPress', 'app_switch')
 
     this.type = function(text) {
       return sendOneWay('input.type', {
@@ -130,9 +117,9 @@ TappSessionService
 
     //@TODO: Refactor this please
     var that = this
-    this.getClipboardContent = function () {
-      that.copy().then(function (result) {
-        $rootScope.$apply(function () {
+    this.getClipboardContent = function() {
+      that.copy().then(function(result) {
+        $rootScope.$apply(function() {
           if (result.success) {
             if (result.lastData) {
               that.clipboardContent = result.lastData
@@ -181,16 +168,16 @@ TappSessionService
     this.testForward = function(forward) {
       return sendTwoWay('forward.test', {
         targetHost: forward.targetHost
-      , targetPort: +forward.targetPort
+      , targetPort: Number(forward.targetPort)
       })
     }
 
     this.createForward = function(forward) {
       return sendTwoWay('forward.create', {
         id: forward.id
-      , devicePort: +forward.devicePort
+      , devicePort: Number(forward.devicePort)
       , targetHost: forward.targetHost
-      , targetPort: +forward.targetPort
+      , targetPort: Number(forward.targetPort)
       })
     }
 
@@ -239,15 +226,15 @@ TappSessionService
       return sendTwoWay('screen.capture')
     }
 
-    this.fsretrieve = function(file){
+    this.fsretrieve = function(file) {
       return sendTwoWay('fs.retrieve', {
-        file: file,
+        file: file
       })
     }
 
-    this.fslist = function(dir){
+    this.fslist = function(dir) {
       return sendTwoWay('fs.list', {
-        dir: dir,
+        dir: dir
       })
     }
 
@@ -309,11 +296,8 @@ TappSessionService
     window.cc = this
   }
 
-  controlService.create = function(target, channel, sessionId) {
-    var cs = new ControlService(target, channel, sessionId);
-    console.log('new ControlService', cs)
-    console.log('ControlService arguments', arguments)
-    return cs
+  controlService.create = function(target, channel) {
+    return new ControlService(target, channel)
   }
 
   return controlService

@@ -4,8 +4,8 @@ module.exports = function badgeIconDirective() {
     replace: true,
     scope: {
     },
-    template: require('./badge-icon.jade'),
-    link: function () {
+    template: require('./badge-icon.pug'),
+    link: function() {
     }
   }
 }

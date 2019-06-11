@@ -3,14 +3,14 @@ module.exports = function DeviceListStatsDirective(
 ) {
   return {
     restrict: 'E'
-  , template: require('./device-list-stats.jade')
+  , template: require('./device-list-stats.pug')
   , scope: {
       tracker: '&tracker'
     }
-  , link: function (scope, element) {
+  , link: function(scope, element) {
       var tracker = scope.tracker()
-        , mapping = Object.create(null)
-        , nodes = Object.create(null)
+      var mapping = Object.create(null)
+      var nodes = Object.create(null)
 
       scope.counter = {
         total: 0
@@ -36,7 +36,6 @@ module.exports = function DeviceListStatsDirective(
       }
 
       function updateStats(device) {
-        console.log('ERIK: Update stats, device', device)
         return (mapping[device.serial] = {
           usable: device.usable ? 1 : 0
         , busy: device.owner ? 1 : 0
@@ -57,8 +56,8 @@ module.exports = function DeviceListStatsDirective(
 
       function changeListener(device) {
         var oldStats = mapping[device.serial]
-          , newStats = updateStats(device)
-          , diffs = Object.create(null)
+        var newStats = updateStats(device)
+        var diffs = Object.create(null)
 
         scope.counter.usable += diffs.usable = newStats.usable - oldStats.usable
         scope.counter.busy += diffs.busy = newStats.busy - oldStats.busy
@@ -71,7 +70,7 @@ module.exports = function DeviceListStatsDirective(
 
       function removeListener(device) {
         var oldStats = mapping[device.serial]
-          , newStats = updateStats(device)
+        var newStats = updateStats(device)
 
         scope.counter.total -= 1
         scope.counter.busy += newStats.busy - oldStats.busy

@@ -4,9 +4,9 @@ module.exports = function refreshPageDirective($window) {
     replace: true,
     scope: {
     },
-    template: require('./refresh-page.jade'),
-    link: function (scope) {
-      scope.reloadWindow = function () {
+    template: require('./refresh-page.pug'),
+    link: function(scope) {
+      scope.reloadWindow = function() {
         $window.location.reload()
       }
     }

@@ -76,6 +76,17 @@ enum MessageType {
   ReverseForwardsEvent       = 72;
   FileSystemListMessage      = 81;
   FileSystemGetMessage       = 82;
+  ConnectStartedMessage      = 92;
+  ConnectStoppedMessage      = 93;
+}
+
+message ConnectStartedMessage {
+  required string serial = 1;
+  required string url = 2;
+}
+
+message ConnectStoppedMessage {
+  required string serial = 1;
 }
 
 message FileSystemListMessage {
@@ -160,6 +171,8 @@ enum DeviceStatus {
   OFFLINE = 1;
   UNAUTHORIZED = 2;
   ONLINE = 3;
+  CONNECTING = 4;
+  AUTHORIZING = 5;
 }
 
 message DeviceStatusMessage {
@@ -197,6 +210,7 @@ message DeviceBrowserMessage {
 
 message DevicePhoneMessage {
   optional string imei = 1;
+  optional string imsi = 5;
   optional string phoneNumber = 2;
   optional string iccid = 3;
   optional string network = 4;
@@ -214,6 +228,8 @@ message DeviceIdentityMessage {
   required DeviceDisplayMessage display = 9;
   required DevicePhoneMessage phone = 11;
   optional string product = 12;
+  optional string cpuPlatform = 13;
+  optional string openGLESVersion = 14;
 }
 
 message DeviceProperty {
@@ -250,6 +266,7 @@ message GroupMessage {
   required OwnerMessage owner = 1;
   optional uint32 timeout = 2;
   repeated DeviceRequirement requirements = 3;
+  optional string usage = 4;
 }
 
 message AutoGroupMessage {
@@ -264,6 +281,7 @@ message UngroupMessage {
 message JoinGroupMessage {
   required string serial = 1;
   required OwnerMessage owner = 2;
+  optional string usage = 3;
 }
 
 message JoinGroupByAdbFingerprintMessage {

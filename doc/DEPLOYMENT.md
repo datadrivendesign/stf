@@ -33,7 +33,7 @@ Since we're dealing with actual physical devices, some units need to be deployed
 
 The provider role requires the following units, which must be together on a single or more hosts.
 
-* [adbd.service](#adbservice)
+* [adbd.service](#adbdservice)
 * [stf-provider@.service](#stf-providerservice)
 
 ### App role
@@ -55,6 +55,7 @@ The app role can contain any of the following units. You may distribute them as 
 * [stf-triproxy-app.service](#stf-triproxy-appservice)
 * [stf-triproxy-dev.service](#stf-triproxy-devservice)
 * [stf-websocket@.service](#stf-websocketservice)
+* [stf-api@.service](#stf-apiservice)
 
 ### Database role
 
@@ -94,7 +95,7 @@ ExecStart=/usr/bin/docker run --rm \
   -v /dev/bus/usb:/dev/bus/usb \
   --net host \
   sorccu/adb:latest
-ExecStop=-/usr/bin/docker stop -t 2 %p
+ExecStop=/usr/bin/docker exec %p adb kill-server
 ```
 
 ### `rethinkdb.service`
@@ -106,11 +107,16 @@ If you need to expand your RethinkDB cluster beyond one server you may encounter
 You will also have to:
 
 1. Modify the `--cache-size` as you please. It limits the amount of memory RethinkDB uses and is given in megabytes, but is not an absolute limit! Real usage can be slightly higher.
-2. Update the version number in `rethinkdb:2.1.1` for the latest release. We don't use `rethinkdb:latest` here because then you might occasionally have to manually rebuild your indexes after an update and not even realize it, bringing the whole system effectively down.
-3. The `AUTHKEY` environment variable is only for convenience when linking. So, the first time you set things up, you will have to access http://DB_SERVER_IP:8080 after starting the unit and run the following command:
 
+2. Update the version number in `rethinkdb:2.3` for the latest release. We don't use `rethinkdb:latest` here because then you might occasionally have to manually rebuild your indexes after an update and not even realize it, bringing the whole system effectively down.
+
+3. The `AUTHKEY` environment variable is only for convenience when linking. So, the first time you set things up, you will have to access http://DB_SERVER_IP:8080 after starting the unit and run the following command:
 ```javascript
-r.db('rethinkdb').table('cluster_config').get('auth').update({auth_key: 'newkey'})
+r.db('rethinkdb').table('users').get('admin').update({password:'yourBrandNewKey'})
+```
+OR, you can initialize rethinkdb with an initial key before starting the unit:
+```bash
+docker run --rm -v /srv/rethinkdb:/data rethinkdb:2.3 rethinkdb --initial-password yourBrandNewKey
 ```
 
 More information can be found [here](https://rethinkdb.com/docs/security/). You will then need to replace `YOUR_RETHINKDB_AUTH_KEY_HERE_IF_ANY` in the the rest of the units with the real authentication key.
@@ -127,19 +133,20 @@ Requires=docker.service
 EnvironmentFile=/etc/environment
 TimeoutStartSec=0
 Restart=always
-ExecStartPre=/usr/bin/docker pull rethinkdb:2.1.1
+ExecStartPre=/usr/bin/docker pull rethinkdb:2.3
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStartPre=/usr/bin/mkdir -p /srv/rethinkdb
+ExecStartPre=/bin/mkdir -p /srv/rethinkdb
 ExecStartPre=/usr/bin/chattr -R +C /srv/rethinkdb
 ExecStart=/usr/bin/docker run --rm \
   --name %p \
   -v /srv/rethinkdb:/data \
   -e "AUTHKEY=YOUR_RETHINKDB_AUTH_KEY_HERE_IF_ANY" \
   --net host \
-  rethinkdb:2.1.1 \
+  rethinkdb:2.3 \
   rethinkdb --bind all \
-    --cache-size 8192
+    --cache-size 8192 \
+    --no-update-check
 ExecStop=-/usr/bin/docker stop -t 10 %p
 ```
 
@@ -179,7 +186,7 @@ These units are required for proper operation of STF. Unless mentioned otherwise
 
 **Requires** the `rethinkdb-proxy-28015.service` unit on the same host.
 
-The app unit provides the main HTTP server and currently a very, very modest API for the client-side. It also serves all static resources including images, scripts and stylesheets.
+The app unit provides the main HTTP server and it serves all static resources including images, scripts and stylesheets.
 
 This is a template unit, meaning that you'll need to start it with an instance identifier. In this example configuration the identifier is used to specify the exposed port number (i.e. `stf-app@3100.service` runs on port 3100). You can have multiple instances running on the same host by using different ports.
 
@@ -204,7 +211,7 @@ ExecStart=/usr/bin/docker run --rm \
   openstf/stf:latest \
   stf app --port 3000 \
     --auth-url https://stf.example.org/auth/mock/ \
-    --websocket-url https://stf.example.org/
+    --websocket-url wss://stf.example.org/
 ExecStop=-/usr/bin/docker stop -t 10 %p-%i
 ```
 
@@ -214,13 +221,17 @@ You may have to change the `--auth-url` depending on which authentication method
 
 You have multiple options here. STF currently provides authentication units for [OAuth 2.0](http://oauth.net/2/) and [LDAP](https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol), plus a mock implementation that simply asks for a name and an email address.
 
-Since the other providers require quite a bit of configuration, we'll simply set up a mock auth unit here. If you'd rather use the real providers, see `stf auth-oauth2 --help` and `stf auth-ldap --help` for the required variables. Note that if your OAuth 2 provider uses a self-signed cert, you may have to add `-e "NODE_TLS_REJECT_UNAUTHORIZED=0"` to the `docker run` command. Don't forget to end the line with `\`.
+#### Option A: Mock auth
+
+With the mock auth provider the user simply enters their name and email and the system trusts those values. This is what the development version uses by default. Obviously not very secure, but very easy to set up if you can trust your users.
 
 This is a template unit, meaning that you'll need to start it with an instance identifier. In this example configuration the identifier is used to specify the exposed port number (i.e. `stf-auth@3200.service` runs on port 3200). You can have multiple instances running on the same host by using different ports.
 
+**NOTE:** Don't forget to change the `--auth-url` option in the `stf-app` unit. For mock auth, the value should be `https://stf.example.org/auth/mock/`.
+
 ```ini
 [Unit]
-Description=STF auth
+Description=STF mock auth
 After=docker.service
 Requires=docker.service
 
@@ -240,6 +251,91 @@ ExecStart=/usr/bin/docker run --rm \
     --app-url https://stf.example.org/
 ExecStop=-/usr/bin/docker stop -t 10 %p-%i
 ```
+
+#### Option B: OAuth 2.0
+
+We'll set up [Google's OAuth 2.0 provider](https://developers.google.com/identity/protocols/OpenIDConnect#appsetup) as an example, allowing users to log in with their Google accounts. You must be able to sign up for the API and configure the authorized URLs by yourself, we won't help you. You can see the callback URL in the unit config below. Proceed once you've received the client id and client secret.
+
+Note that if you use another OAuth 2 provider that uses a self-signed cert, you may have to add `-e "NODE_TLS_REJECT_UNAUTHORIZED=0"` to the `docker run` command. Don't forget to end the line with `\`.
+
+This is a template unit, meaning that you'll need to start it with an instance identifier. In this example configuration the identifier is used to specify the exposed port number (i.e. `stf-auth@3200.service` runs on port 3200). You can have multiple instances running on the same host by using different ports.
+
+**NOTE:** Don't forget to change the `--auth-url` option in the `stf-app` unit. For OAuth 2.0, the value should be `https://stf.example.org/auth/oauth/`.
+
+```ini
+[Unit]
+Description=STF OAuth 2.0 auth
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=/usr/bin/docker pull openstf/stf:latest
+ExecStartPre=-/usr/bin/docker kill %p-%i
+ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStart=/usr/bin/docker run --rm \
+  --name %p-%i \
+  -e "SECRET=YOUR_SESSION_SECRET_HERE" \
+  -e "OAUTH_AUTHORIZATION_URL=https://accounts.google.com/o/oauth2/v2/auth" \
+  -e "OAUTH_TOKEN_URL=https://www.googleapis.com/oauth2/v4/token" \
+  -e "OAUTH_USERINFO_URL=https://www.googleapis.com/oauth2/v3/userinfo" \
+  -e "OAUTH_CLIENT_ID=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.apps.googleusercontent.com" \
+  -e "OAUTH_CLIENT_SECRET=BBBBBBBBBBBBBBBBBBBBBBBB" \
+  -e "OAUTH_CALLBACK_URL=https://stf.example.org/auth/oauth/callback" \
+  -e "OAUTH_SCOPE=openid email" \
+  -p %i:3000 \
+  openstf/stf:latest \
+  stf auth-oauth2 --port 3000 \
+    --app-url https://stf.example.org/
+ExecStop=-/usr/bin/docker stop -t 10 %p-%i
+```
+
+#### Option C: LDAP
+
+See `stf auth-ldap --help` and change one of the unit files above as required.
+
+**NOTE:** Don't forget to change the `--auth-url` option in the `stf-app` unit. For LDAP, the value should be `https://stf.example.org/auth/ldap/`.
+
+#### Option D: SAML 2.0
+
+This is one of the multiple options for authentication provided by STF. It uses [SAML 2.0](http://saml.xml.org/saml-specifications) protocol. If your company uses [Okta](https://www.okta.com/) or some other SAML 2.0 supported id provider, you can use it.
+
+This is a template unit, meaning that you'll need to start it with an instance identifier. In this example configuration the identifier is used to specify the exposed port number (i.e. `stf-auth@3200.service` runs on port 3200). You can have multiple instances running on the same host by using different ports.
+
+**NOTE:** Don't forget to change the `--auth-url` option in the `stf-app` unit. For SAML 2.0, the value should be `https://stf.example.org/auth/saml/`.
+
+```ini
+[Unit]
+Description=STF SAML 2.0 auth
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=/usr/bin/docker pull openstf/stf:latest
+ExecStartPre=-/usr/bin/docker kill %p-%i
+ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStart=/usr/bin/docker run --rm \
+  --name %p-%i \
+  -v /srv/ssl/id_provider.cert:/etc/id_provider.cert:ro \
+  -e "SECRET=YOUR_SESSION_SECRET_HERE" \
+  -e "SAML_ID_PROVIDER_ENTRY_POINT_URL=YOUR_ID_PROVIDER_ENTRY_POINT" \
+  -e "SAML_ID_PROVIDER_ISSUER=YOUR_ID_PROVIDER_ISSUER" \
+  -e "SAML_ID_PROVIDER_CERT_PATH=/etc/id_proider.cert" \
+  -p %i:3000 \
+  openstf/stf:latest \
+  stf auth-saml2 --port 3000 \
+    --app-url https://stf.example.org/
+ExecStop=-/usr/bin/docker stop -t 10 %p-%i
+```
+
+#### Other options
+
+See `stf -h` for other possible options.
 
 ### `stf-migrate.service`
 
@@ -454,6 +550,8 @@ Restart=always
 ExecStartPre=/usr/bin/docker pull openstf/stf:latest
 ExecStartPre=-/usr/bin/docker kill %p-%i
 ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStartPre=/bin/mkdir -p /mnt/storage
+ExecStartPre=/bin/chmod 777 /mnt/storage
 ExecStart=/usr/bin/docker run --rm \
   --name %p-%i \
   -v /mnt/storage:/data \
@@ -564,6 +662,39 @@ ExecStart=/usr/bin/docker run --rm \
 ExecStop=/usr/bin/docker stop -t 10 %p-%i
 ```
 
+### `stf-api@.service`
+
+**Requires** the `rethinkdb-proxy-28015.service` unit on the same host.
+
+The api unit provides all the major RESTful APIs for STF. Users can generate their personal access token from STF UI and can use that token to access these api from any interface.
+
+This is a template unit, meaning that you'll need to start it with an instance identifier. In this example configuration the identifier is used to specify the exposed port number (i.e. `stf-api@3700.service` runs on port 3700). You can have multiple instances running on the same host by using different ports.
+
+```ini
+[Unit]
+Description=STF api
+After=rethinkdb-proxy-28015.service
+BindsTo=rethinkdb-proxy-28015.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=/usr/bin/docker pull openstf/stf:latest
+ExecStartPre=-/usr/bin/docker kill %p-%i
+ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStart=/usr/bin/docker run --rm \
+  --name %p-%i \
+  --link rethinkdb-proxy-28015:rethinkdb \
+  -e "SECRET=YOUR_SESSION_SECRET_HERE" \
+  -p %i:3000 \
+  openstf/stf:latest \
+  stf api --port 3000 \
+  --connect-sub tcp://appside.stf.example.org:7150 \
+  --connect-push tcp://appside.stf.example.org:7170
+ExecStop=-/usr/bin/docker stop -t 10 %p-%i
+```
+
 ## Optional units
 
 These units are optional and don't affect the way STF works in any way.
@@ -629,6 +760,67 @@ ExecStart=/usr/bin/docker run --rm \
 ExecStop=-/usr/bin/docker stop -t 10 %p
 ```
 
+### `stf-notify-slack.service`
+
+The optional [Slack](https://slack.com/) notifier unit can be enabled to push STF notifications to a public or private Slack channel. To use it, generate an [API Token](https://api.slack.com/docs/oauth-test-tokens) and select or create a destination channel. Run `stf notify-slack --help` for additional configuration options.
+
+As with other notification units, running multiple instances of this unit at once results in message duplication and is not advised.
+
+```ini
+[Unit]
+Description=STF Slack notifier
+After=docker.service
+BindsTo=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=/usr/bin/docker pull openstf/stf:latest
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run --rm \
+  --name %p \
+  -e "SLACK_TOKEN=YOUR_SLACK_TOKEN_HERE" \
+  -e "SLACK_CHANNEL=YOUR_SLACK_CHANNEL_HERE" \
+  openstf/stf:latest \
+  stf notify-slack \
+    --connect-sub tcp://appside.stf.example.org:7150
+ExecStop=-/usr/bin/docker stop -t 10 %p
+```
+
+### `stf-storage-s3@.service`
+
+If you want to store data such as screenshots and apk files into [Amazon S3](https://aws.amazon.com/s3/) instead of locally, then you can use this optional unit. Before using this you will need to setup your amazon account and get proper credentials for S3 bucket. You can read more about this at [AWS documentation](https://aws.amazon.com/s3/).
+
+** NOTE** If you are using this storage, you will not need [stf-storage-temp@.service](#stf-storage-tempservice) unit, since both do the same thing. Only the storage location is different.
+
+This is a template unit, meaning that you'll need to start it with an instance identifier. In this example configuration the identifier is used to specify the exposed port number (i.e. `stf-storage-s3@3500.service` runs on port 3500). Currently, **you cannot have more than one instance of this unit**, as both temporary files and an in-memory mapping is used. Using a template unit makes it easy to set the port.
+
+```ini
+[Unit]
+Description=STF s3 storage
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=/usr/bin/docker pull openstf/stf:latest
+ExecStartPre=-/usr/bin/docker kill %p-%i
+ExecStartPre=-/usr/bin/docker rm %p-%i
+ExecStart=/usr/bin/docker run --rm \
+  --name %p-%i \
+  -p %i:3000 \
+  openstf/stf:latest \
+  stf storage-s3 --port 3000 \
+    --bucket YOUR_S3_BUCKET_NAME_HERE \
+    --profile YOUR_AWS_CREDENTIALS_PROFILE \
+    --endpoint YOUR_BUCKET_ENDPOING_HERE
+ExecStop=-/usr/bin/docker stop -t 10 %p-%i
+```
+
 ## Nginx configuration
 
 Now that you've got all the units ready, it's time to set up [nginx](http://nginx.org/) to tie all the processes together with a clean URL.
@@ -684,6 +876,10 @@ http {
 
   upstream stf_websocket {
     server 192.168.255.100:3600 max_fails=0;
+  }
+
+  upstream stf_api {
+    server 192.168.255.100:3700 max_fails=0;
   }
 
   types {
@@ -752,6 +948,10 @@ http {
 
     location /auth/ {
       proxy_pass http://stf_auth/auth/;
+    }
+
+    location /api/ {
+      proxy_pass http://stf_api/api/;
     }
 
     location /s/image/ {

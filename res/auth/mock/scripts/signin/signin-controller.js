@@ -1,31 +1,19 @@
-module.exports = function SignInCtrl($scope, $http, $routeParams) {
+module.exports = function SignInCtrl($scope, $http) {
 
   $scope.error = null
-  console.log($scope, 's')
-  console.log($routeParams, 'rp')
-  console.log($http, 'http')
 
-  $scope.submit = function () {
+  $scope.submit = function() {
     var data = {
       name: $scope.signin.username.$modelValue
       , email: $scope.signin.email.$modelValue
     }
     $scope.invalid = false
     $http.post('/auth/api/v1/mock', data)
-      .success(function (response) {
+      .success(function(response) {
         $scope.error = null
-
-        // ERIK: When the user is not authed, we will still have the redirect
-        // stored on the url's hash.  If it exists, use this redirect instead
-        // of the url OpenStf provides.
-        var redirectOverride = decodeURIComponent(window.location.hash);
-        if (redirectOverride) {
-          location.replace(redirectOverride);
-        } else {
-          location.replace(response.redirect)
-        }
+        location.replace(response.redirect)
       })
-      .error(function (response) {
+      .error(function(response) {
         switch (response.error) {
           case 'ValidationError':
             $scope.error = {

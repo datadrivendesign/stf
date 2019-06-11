@@ -14,10 +14,9 @@ module.exports = angular.module('control-panes', [
   //require('./resources').name,
   require('./screenshots').name,
   require('./explorer').name,
-  require('./info').name,
-  require('stf/tapp').name
+  require('./info').name
 ])
-  .config(['$routeProvider', function ($routeProvider) {
+  .config(['$routeProvider', function($routeProvider) {
 
     $routeProvider
       .when('/control', {
@@ -25,7 +24,7 @@ module.exports = angular.module('control-panes', [
         controller: 'ControlPanesNoDeviceController'
       })
       .when('/control/:serial', {
-        template: require('./control-panes.jade'),
+        template: require('./control-panes.pug'),
         controller: 'ControlPanesCtrl'
         // TODO: Move device inviting to resolve
         //resolve: {
@@ -35,11 +34,7 @@ module.exports = angular.module('control-panes', [
       })
       // TODO: add standalone
       .when('/c/:serial', {
-        template: require('./control-panes.jade'),
-        controller: 'ControlPanesCtrl'
-      })
-      .when('/control/:serial/:sessionId', {
-        template: require('./control-panes.jade'),
+        template: require('./control-panes.pug'),
         controller: 'ControlPanesCtrl'
       })
   }])

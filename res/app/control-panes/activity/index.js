@@ -5,9 +5,9 @@ module.exports = angular.module('stf.activity', [
   require('stf/common-ui').name,
   require('stf/timeline').name
 ])
-  .run(["$templateCache", function ($templateCache) {
-    $templateCache.put('control-panes/activity/activity.jade',
-      require('./activity.jade')
+  .run(['$templateCache', function($templateCache) {
+    $templateCache.put('control-panes/activity/activity.pug',
+      require('./activity.pug')
     )
   }])
   .controller('ActivityCtrl', require('./activity-controller'))

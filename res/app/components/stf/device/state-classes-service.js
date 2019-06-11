@@ -1,7 +1,7 @@
 module.exports = function StateClassesService() {
   var service = {}
 
-  service.stateButton = function (state) {
+  service.stateButton = function(state) {
     var stateClasses = {
       using: 'state-using btn-primary',
       busy: 'state-busy btn-warning',
@@ -10,7 +10,8 @@ module.exports = function StateClassesService() {
       present: 'state-present btn-primary-outline',
       preparing: 'state-preparing btn-primary-outline btn-success-outline',
       unauthorized: 'state-unauthorized btn-danger-outline',
-      offline: 'state-offline btn-warning-outline'
+      offline: 'state-offline btn-warning-outline',
+      automation: 'state-automation btn-info'
     }[state]
     if (typeof stateClasses === 'undefined') {
       stateClasses = 'btn-default-outline'
@@ -18,7 +19,7 @@ module.exports = function StateClassesService() {
     return stateClasses
   }
 
-  service.stateColor = function (state) {
+  service.stateColor = function(state) {
     var stateClasses = {
       using: 'state-using',
       busy: 'state-busy',
@@ -27,7 +28,8 @@ module.exports = function StateClassesService() {
       present: 'state-present',
       preparing: 'state-preparing',
       unauthorized: 'state-unauthorized',
-      offline: 'state-offline'
+      offline: 'state-offline',
+      automation: 'state-automation'
     }[state]
     if (typeof stateClasses === 'undefined') {
       stateClasses = ''
@@ -37,4 +39,3 @@ module.exports = function StateClassesService() {
 
   return service
 }
-

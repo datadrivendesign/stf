@@ -7,10 +7,9 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
 
   function Tracker($scope, options) {
     var devices = []
-      , devicesBySerial = Object.create(null)
-      , scopedSocket = socket.scoped($scope)
-      , digestTimer
-      , lastDigest
+    var devicesBySerial = Object.create(null)
+    var scopedSocket = socket.scoped($scope)
+    var digestTimer, lastDigest
 
     $scope.$on('$destroy', function() {
       clearTimeout(digestTimer)
@@ -81,7 +80,9 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
     var modify = function modify(data, newData) {
       _.merge(data, newData, function(a, b) {
         // New Arrays overwrite old Arrays
-        return _.isArray(b) ? b : undefined
+        if (_.isArray(b)) {
+          return b
+        }
       })
       sync(data)
       this.emit('change', data)
@@ -156,7 +157,7 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
 
   Tracker.prototype = new EventEmitter()
 
-  deviceService.trackAll = function ($scope) {
+  deviceService.trackAll = function($scope) {
     var tracker = new Tracker($scope, {
       filter: function() {
         return true
@@ -164,15 +165,15 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
     , digest: false
     })
 
-    oboe('/app/api/v1/devices')
-      .node('devices[*]', function (device) {
+    oboe('/api/v1/devices')
+      .node('devices[*]', function(device) {
         tracker.add(device)
       })
 
     return tracker
   }
 
-  deviceService.trackGroup = function ($scope) {
+  deviceService.trackGroup = function($scope) {
     var tracker = new Tracker($scope, {
       filter: function(device) {
         return device.using
@@ -180,8 +181,8 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
     , digest: true
     })
 
-    oboe('/app/api/v1/group')
-      .node('devices[*]', function (device) {
+    oboe('/api/v1/user/devices')
+      .node('devices[*]', function(device) {
         tracker.add(device)
       })
 
@@ -189,13 +190,13 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
   }
 
   deviceService.load = function(serial) {
-    return $http.get('/app/api/v1/devices/' + serial)
-      .then(function (response) {
+    return $http.get('/api/v1/devices/' + serial)
+      .then(function(response) {
         return response.data.device
       })
   }
 
-  deviceService.get = function (serial, $scope) {
+  deviceService.get = function(serial, $scope) {
     var tracker = new Tracker($scope, {
       filter: function(device) {
         return device.serial === serial
@@ -210,7 +211,7 @@ module.exports = function DeviceServiceFactory($http, socket, EnhanceDeviceServi
       })
   }
 
-  deviceService.updateNote = function (serial, note) {
+  deviceService.updateNote = function(serial, note) {
     socket.emit('device.note', {
       serial: serial,
       note: note

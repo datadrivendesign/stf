@@ -7,16 +7,16 @@ module.exports = function deviceContextMenuDirective($window) {
     //  device: '&'
     //},
     transclude: true,
-    template: require('./device-context-menu.jade'),
-    link: function (scope) {
+    template: require('./device-context-menu.pug'),
+    link: function(scope) {
       //var device = scope.device()
       //var control = scope.control()
-      scope.windowClose = function () {
+      scope.windowClose = function() {
         $window.close()
       }
 
-      scope.saveScreenShot = function () {
-        scope.control.screenshot().then(function (result) {
+      scope.saveScreenShot = function() {
+        scope.control.screenshot().then(function(result) {
           location.href = result.body.href + '?download'
         })
       }

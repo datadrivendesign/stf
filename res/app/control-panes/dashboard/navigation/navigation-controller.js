@@ -17,7 +17,7 @@ module.exports = function NavigationCtrl($scope, $rootScope) {
 
   resetFavicon()
 
-  $scope.textUrlChanged = function () {
+  $scope.textUrlChanged = function() {
     if (faviconIsSet) {
       resetFavicon()
     }
@@ -33,7 +33,7 @@ module.exports = function NavigationCtrl($scope, $rootScope) {
 
   $scope.blurUrl = false
 
-  $scope.openURL = function () {
+  $scope.openURL = function() {
     $scope.blurUrl = true
     $rootScope.screenFocus = true
 
@@ -46,7 +46,7 @@ module.exports = function NavigationCtrl($scope, $rootScope) {
     if (browser && browser.apps) {
       var currentBrowser = {}
       if (browser.selected) {
-        var selectedBrowser = _.first(browser.apps, 'selected')
+        var selectedBrowser = _.head(browser.apps, 'selected')
         if (!_.isEmpty(selectedBrowser)) {
           currentBrowser = selectedBrowser
         }
@@ -55,7 +55,7 @@ module.exports = function NavigationCtrl($scope, $rootScope) {
         if (defaultBrowser) {
           currentBrowser = defaultBrowser
         } else {
-          currentBrowser = _.first(browser.apps)
+          currentBrowser = _.head(browser.apps)
         }
       }
       $rootScope.browser = currentBrowser
@@ -64,13 +64,13 @@ module.exports = function NavigationCtrl($scope, $rootScope) {
 
   setCurrentBrowser($scope.device ? $scope.device.browser : null)
 
-  $scope.$watch('device.browser', function (newValue, oldValue) {
+  $scope.$watch('device.browser', function(newValue, oldValue) {
     if (newValue !== oldValue) {
       setCurrentBrowser(newValue)
     }
   }, true)
 
-  $scope.clearSettings = function () {
+  $scope.clearSettings = function() {
     var browser = $scope.browser
     $scope.control.clearBrowser(browser)
   }

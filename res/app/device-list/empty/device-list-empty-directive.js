@@ -1,18 +1,18 @@
 module.exports = function DeviceListEmptyDirective() {
   return {
     restrict: 'E'
-  , template: require('./device-list-empty.jade')
+  , template: require('./device-list-empty.pug')
   , scope: {
       tracker: '&tracker'
     }
-  , link: function (scope) {
+  , link: function(scope) {
       var tracker = scope.tracker()
 
       scope.empty = !tracker.devices.length
 
       function update() {
         var oldEmpty = scope.empty
-          , newEmpty = !tracker.devices.length
+        var newEmpty = !tracker.devices.length
 
         if (oldEmpty !== newEmpty) {
           scope.$apply(function() {
