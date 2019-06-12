@@ -1,0 +1,44 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    base(href='/')
+    meta(name='viewport', content='width=device-width, initial-scale=1, ' +
+    'maximum-scale=1, user-scalable=no')
+    meta(name='mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-title', content='STF')
+    meta(name='format-detection', content='telephone=no')
+    meta(name='apple-mobile-web-app-status-bar-style',
+    content='black-translucent')
+    link(href='static/logo/exports/STF-128.png', rel='apple-touch-icon')
+    link(rel="stylesheet",type="text/css",
+    href="static/bower_components/bootstrap/dist/css/bootstrap.min.css")
+
+    title CrowdSTF
+  body.container-fluid
+    h3
+      = 'Your app usage session has ended.'
+    if !submittedFeedback
+      form(action=`/app/api/v1/noauth/feedback/${token}`, method="post")
+        .form-group
+          label List some tasks that you performed in the app.
+          input.form-control(name="tasks[0]")
+        .form-group
+          input.form-control(name="tasks[1]")
+        .form-group
+          input.form-control(name="tasks[2]")
+        .form-group
+          input.form-control(name="tasks[3]")
+        .form-group
+          input.form-control(name="tasks[4]")
+        .form-group
+          label.checkbox-inline
+            input(type="checkbox", name="hadIssues")
+            | Click this checkbox if you had trouble using the app (Please explain in the comments below)
+        .form-group
+          label Comments
+          textarea.form-control(rows="3", name="comments")
+        button.btn.btn-primary(type="submit") Submit
+    else
+      h4 Thanks for your feedback!

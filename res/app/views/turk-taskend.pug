@@ -1,0 +1,99 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    base(href='/')
+    meta(name='viewport', content='width=device-width, initial-scale=1, ' +
+    'maximum-scale=1, user-scalable=no')
+    meta(name='mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='apple-mobile-web-app-title', content='STF')
+    meta(name='format-detection', content='telephone=no')
+    meta(name='apple-mobile-web-app-status-bar-style',
+    content='black-translucent')
+    link(href='static/logo/exports/STF-128.png', rel='apple-touch-icon')
+    //- <!-- Compiled and minified CSS -->
+    link(rel="stylesheet", type="text/css",
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css")
+
+    //- <!-- Compiled and minified JavaScript -->
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js")
+
+
+    title CrowdSTF
+  body
+    div.container
+      if !submittedTask
+        div.row
+          h3
+            = 'Please answer the following questions:'
+        div.row
+          form(action=`/app/api/v1/noauth/responses/${token}`, method="post")
+            each q, i in task.feedbackQuestions
+              .form-group.row
+                if q.type == "SCALE"
+                  label How much do you agree with this statement: #{q.question}
+                else
+                  label #{q.question}
+                br
+                input(type="hidden" name=`feedback[${i}][questionId]` value=`${q.questionId}`)
+                if q.type == "FREEFORM"
+                  div.input-field
+                    input.form-control(type="text" name=`feedback[${i}][answer]`)
+                else if q.type == "SCALE"
+                  div.row
+                    label
+                      input(type="radio" name=`feedback[${i}][answer]` value='1')
+                      span Strongly Agree
+                  div.row
+                    label
+                      input(type="radio" name=`feedback[${i}][answer]` value='2')
+                      span Agree
+                  div.row
+                    label
+                      input(type="radio" name=`feedback[${i}][answer]` value='3')
+                      span Neutral
+                  div.row
+                    label
+                      input(type="radio" name=`feedback[${i}][answer]` value='4')
+                      span Disagree
+                  div.row
+                    label
+                      input(type="radio" name=`feedback[${i}][answer]` value='5')
+                      span Strongly Disagree
+                else if q.type == "SELECT"
+                  div.input-field.col.s1
+                    select(name=`feedback[${i}][answer]`)
+                      each c in q.choices
+                        option(value=`${c}`) #{c}
+                else
+                  each c in q.choices
+                    div.row
+                      label
+                        input(type="radio" name=`feedback[${i}][answer]` value=`${c}`)
+                        span &nbsp; #{c} &nbsp;
+
+
+            button.btn.btn-primary(type="submit") Submit
+      else
+        h3
+          = 'Thank you for participating! Please return to Mechanical Turk and submit your HIT.'
+        h3.text-danger
+          = 'We cannot pay you if you do not submit your HIT on the Mechanical Turk page.'
+        h3
+          = 'For any problems or feedback, please email '
+          a(href='mailto:' + contactEmail)=contactEmail
+          = '.'
+
+style.
+  .row {
+    margin-bottom: 5px;
+  }
+
+
+script(type="text/javascript").
+  const states = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY']
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems, states);
+  });
