@@ -112,36 +112,36 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
     }
 
     function addListener(event) {
-      var decryptedEvent = cryptutil.decrypt(event)
-      var device = get(decryptedEvent.data)
+      var decrypted = cryptutil.decrypt(event)
+      var device = get(decrypted.data)
       if (device) {
-        modify(device, decryptedEvent.data)
-        notify(decryptedEvent)
+        modify(device, decrypted.data)
+        notify(decrypted)
       }
       else {
-        if (options.filter(decryptedEvent.data)) {
-          insert(decryptedEvent.data)
-          notify(decryptedEvent)
+        if (options.filter(decrypted.data)) {
+          insert(decrypted.data)
+          notify(decrypted)
         }
       }
     }
 
     function changeListener(event) {
-      var decryptedEvent = cryptutil.decrypt(event)
-      var device = get(decryptedEvent.data)
+      var decrypted = cryptutil.decrypt(event)
+      var device = get(decrypted.data)
       if (device) {
-        modify(device, decryptedEvent.data)
+        modify(device, decrypted.data)
         if (!options.filter(device)) {
           remove(device)
         }
-        notify(decryptedEvent)
+        notify(decrypted)
       }
       else {
-        if (options.filter(decryptedEvent.data)) {
-          insert(decryptedEvent.data)
+        if (options.filter(decrypted.data)) {
+          insert(decrypted.data)
           // We've only got partial data
-          fetch(decryptedEvent.data)
-          notify(decryptedEvent)
+          fetch(decrypted.data)
+          notify(decrypted)
         }
       }
     }
@@ -150,13 +150,13 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
     scopedSocket.on('device.remove', changeListener)
     scopedSocket.on('device.change', changeListener)
     scopedSocket.on('forceKick', function(tokenObj) {
-      var decryptedTokenObj = cryptutil.decrypt(tokenObj);
-      var device = get({serial: decryptedTokenObj.serial});
+      var decrypted = cryptutil.decrypt(tokenObj);
+      var device = get({serial: decrypted.serial});
       GroupService.kick(device, true);
       $cookies.remove('XSRF-TOKEN');
       $cookies.remove('ssid');
       $cookies.remove('ssid.sig');
-      window.location.replace('/auth/token/'+ decryptedTokenObj.token);
+      window.location.replace('/auth/token/'+ decrypted.token);
     });
 
     this.add = function(device) {
