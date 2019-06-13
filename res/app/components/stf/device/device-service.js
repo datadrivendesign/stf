@@ -103,10 +103,10 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
     function fetch(data) {
       deviceService.load(data.serial)
         .then(function(device) {
-          return changeListener({
+          return changeListener(cryptutil.encrypt({
             important: true
           , data: device
-          })
+          }))
         })
         .catch(function() {})
     }
@@ -160,10 +160,22 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
     });
 
     this.add = function(device) {
-      addListener({
+      var event = {
         important: true
       , data: device
-      })
+      }
+      var device = get(event.data)
+
+      if (device) {
+        modify(device, event.data)
+        notify(event)
+      }
+      else {
+        if (options.filter(event.data)) {
+          insert(event.data)
+          notify(event)
+        }
+      }
     }
 
     this.devices = devices

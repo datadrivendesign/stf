@@ -24,8 +24,8 @@ module.exports = function AccessTokenServiceFactory(
   }
 
   socket.on('user.keys.accessToken.generated', function(token) {
-    var decryptedToken = cryptutil.decrypted(token)
-    $rootScope.$broadcast('user.keys.accessTokens.generated', decryptedToken)
+    var decrypted = cryptutil.decrypt(token)
+    $rootScope.$broadcast('user.keys.accessTokens.generated', decrypted)
     $rootScope.$apply()
   })
 

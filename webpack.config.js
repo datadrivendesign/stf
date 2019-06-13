@@ -107,6 +107,7 @@ module.exports = {
         }
         , 1000
       ))
+      , new webpack.EnvironmentPlugin(['WEBSOCKET_SECRET'])
     ]
   }
   , webpackServer: {

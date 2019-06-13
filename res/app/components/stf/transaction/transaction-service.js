@@ -15,24 +15,24 @@ module.exports = function TransactionServiceFactory(socket, TransactionError) {
     var channel = createChannel()
 
     function doneListener(someChannel, data) {
-      var decryptedData = cryptutil.decrypt(data)
+      var decrypted = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending[data.source].done(decryptedData)
+        pending[data.source].done(decrypted)
       }
     }
 
     function progressListener(someChannel, data) {
-      var decryptedData = cryptutil.decrypt(data)
+      var decrypted = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending[data.source].progress(decryptedData)
+        pending[data.source].progress(decrypted)
       }
     }
 
     function cancelListener(someChannel, data) {
-      var decryptedData = cryptutil.decrypt(data)
+      var decrypted = cryptutil.decrypt(data)
       if (someChannel === channel) {
         Object.keys(pending).forEach(function(source) {
-          pending[source].cancel(decryptedData)
+          pending[source].cancel(decrypted)
         })
       }
     }
@@ -70,23 +70,23 @@ module.exports = function TransactionServiceFactory(socket, TransactionError) {
     var channel = createChannel()
 
     function doneListener(someChannel, data) {
-      var decryptedData = cryptutil.decrypt(data)
+      var decrypted = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending.done(decryptedData)
+        pending.done(decrypted)
       }
     }
 
     function progressListener(someChannel, data) {
-      var decryptedData = cryptutil.decrypt(data)
+      var decrypted = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending.progress(decryptedData)
+        pending.progress(decrypted)
       }
     }
 
     function cancelListener(someChannel, data) {
-      var decryptedData = cryptutil.decrypt(data)
+      var decrypted = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending.cancel(decryptedData)
+        pending.cancel(decrypted)
       }
     }
 

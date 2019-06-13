@@ -93,13 +93,13 @@ module.exports = function LogcatServiceFactory(socket, FilterStringService) {
   }
 
   socket.on('logcat.entry', function(rawData) {
-    var decryptedData = cryptutil.decryptedData(rawData)
+    var decrypted = cryptutil.decrypt(rawData)
     service.numberOfEntries++
-    service.entries.push(enhanceEntry(decryptedData))
+    service.entries.push(enhanceEntry(decrypted))
 
     if (typeof (service.addEntryListener) === 'function') {
-      if (filterLine(decryptedData)) {
-        service.addEntryListener(decryptedData)
+      if (filterLine(decrypted)) {
+        service.addEntryListener(decrypted)
       }
     }
   })
