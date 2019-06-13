@@ -1,3 +1,5 @@
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
+
 module.exports = function AccessTokenServiceFactory(
   $rootScope
 , $http
@@ -22,7 +24,8 @@ module.exports = function AccessTokenServiceFactory(
   }
 
   socket.on('user.keys.accessToken.generated', function(token) {
-    $rootScope.$broadcast('user.keys.accessTokens.generated', token)
+    var decryptedToken = cryptutil.decrypted(token)
+    $rootScope.$broadcast('user.keys.accessTokens.generated', decryptedToken)
     $rootScope.$apply()
   })
 

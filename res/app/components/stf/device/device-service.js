@@ -1,6 +1,7 @@
 var oboe = require('oboe')
 var _ = require('lodash')
 var EventEmitter = require('eventemitter3')
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
 
 module.exports = function DeviceServiceFactory($http, $cookies, socket,
                                                EnhanceDeviceService,
@@ -111,34 +112,36 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
     }
 
     function addListener(event) {
-      var device = get(event.data)
+      var decryptedEvent = cryptutil.decrypt(event)
+      var device = get(decryptedEvent.data)
       if (device) {
-        modify(device, event.data)
-        notify(event)
+        modify(device, decryptedEvent.data)
+        notify(decryptedEvent)
       }
       else {
-        if (options.filter(event.data)) {
-          insert(event.data)
-          notify(event)
+        if (options.filter(decryptedEvent.data)) {
+          insert(decryptedEvent.data)
+          notify(decryptedEvent)
         }
       }
     }
 
     function changeListener(event) {
-      var device = get(event.data)
+      var decryptedEvent = cryptutil.decrypt(event)
+      var device = get(decryptedEvent.data)
       if (device) {
-        modify(device, event.data)
+        modify(device, decryptedEvent.data)
         if (!options.filter(device)) {
           remove(device)
         }
-        notify(event)
+        notify(decryptedEvent)
       }
       else {
-        if (options.filter(event.data)) {
-          insert(event.data)
+        if (options.filter(decryptedEvent.data)) {
+          insert(decryptedEvent.data)
           // We've only got partial data
-          fetch(event.data)
-          notify(event)
+          fetch(decryptedEvent.data)
+          notify(decryptedEvent)
         }
       }
     }
@@ -147,12 +150,13 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
     scopedSocket.on('device.remove', changeListener)
     scopedSocket.on('device.change', changeListener)
     scopedSocket.on('forceKick', function(tokenObj) {
-      var device = get({serial: tokenObj.serial});
+      var decryptedTokenObj = cryptutil.decrypt(tokenObj);
+      var device = get({serial: decryptedTokenObj.serial});
       GroupService.kick(device, true);
       $cookies.remove('XSRF-TOKEN');
       $cookies.remove('ssid');
       $cookies.remove('ssid.sig');
-      window.location.replace('/auth/token/'+tokenObj.token);
+      window.location.replace('/auth/token/'+ decryptedTokenObj.token);
     });
 
     this.add = function(device) {

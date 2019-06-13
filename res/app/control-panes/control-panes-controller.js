@@ -1,3 +1,5 @@
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
+
 module.exports =
   function ControlPanesController($scope, $http, gettext, $routeParams,
     $timeout, $location, DeviceService, GroupService, ControlService,
@@ -92,7 +94,7 @@ module.exports =
 
     socket.on('warn.pii', function(message) {
       $scope.$apply(function() {
-        $scope.flaggedWords = message.flaggedWords;
+        $scope.flaggedWords = cryptutil.decrypt(message).flaggedWords;
       });
     });
   }

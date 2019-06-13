@@ -1,4 +1,5 @@
 var io = require('socket.io')
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
 
 module.exports = function SocketFactory(
   $rootScope
@@ -45,7 +46,7 @@ module.exports = function SocketFactory(
 
   socket.on('socket.ip', function(ip) {
     $rootScope.$apply(function() {
-      socket.ip = ip
+      socket.ip = cryptutil.decrypt(ip)
     })
   })
 

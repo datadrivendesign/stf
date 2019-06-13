@@ -1,5 +1,6 @@
 var Promise = require('bluebird')
 var uuid = require('uuid')
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
 
 module.exports = function TransactionServiceFactory(socket, TransactionError) {
   var transactionService = {}
@@ -14,21 +15,24 @@ module.exports = function TransactionServiceFactory(socket, TransactionError) {
     var channel = createChannel()
 
     function doneListener(someChannel, data) {
+      var decryptedData = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending[data.source].done(data)
+        pending[data.source].done(decryptedData)
       }
     }
 
     function progressListener(someChannel, data) {
+      var decryptedData = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending[data.source].progress(data)
+        pending[data.source].progress(decryptedData)
       }
     }
 
     function cancelListener(someChannel, data) {
+      var decryptedData = cryptutil.decrypt(data)
       if (someChannel === channel) {
         Object.keys(pending).forEach(function(source) {
-          pending[source].cancel(data)
+          pending[source].cancel(decryptedData)
         })
       }
     }
@@ -66,20 +70,23 @@ module.exports = function TransactionServiceFactory(socket, TransactionError) {
     var channel = createChannel()
 
     function doneListener(someChannel, data) {
+      var decryptedData = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending.done(data)
+        pending.done(decryptedData)
       }
     }
 
     function progressListener(someChannel, data) {
+      var decryptedData = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending.progress(data)
+        pending.progress(decryptedData)
       }
     }
 
     function cancelListener(someChannel, data) {
+      var decryptedData = cryptutil.decrypt(data)
       if (someChannel === channel) {
-        pending.cancel(data)
+        pending.cancel(decryptedData)
       }
     }
 

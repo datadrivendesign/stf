@@ -1,3 +1,5 @@
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
+
 module.exports = function UserServiceFactory(
   $rootScope
 , socket
@@ -25,27 +27,31 @@ module.exports = function UserServiceFactory(
   }
 
   socket.on('user.keys.adb.error', function(error) {
-    $rootScope.$broadcast('user.keys.adb.error', error)
+    var decryptedError = cryptutil.decrypted(error)
+    $rootScope.$broadcast('user.keys.adb.error', decryptedError)
   })
 
   socket.on('user.keys.adb.added', function(key) {
-    UserService.getAdbKeys().push(key)
+    var decryptedKey = cryptutil.decrypted(key)
+    UserService.getAdbKeys().push(decryptedKey)
     $rootScope.$broadcast('user.keys.adb.updated', user.adbKeys)
     $rootScope.$apply()
   })
 
   socket.on('user.keys.adb.removed', function(key) {
+    var decryptedKey = cryptutil.decrypted(key)
     user.adbKeys = UserService.getAdbKeys().filter(function(someKey) {
-      return someKey.fingerprint !== key.fingerprint
+      return someKey.fingerprint !== decryptedKey.fingerprint
     })
     $rootScope.$broadcast('user.keys.adb.updated', user.adbKeys)
     $rootScope.$apply()
   })
 
   socket.on('user.keys.adb.confirm', function(data) {
-    AddAdbKeyModalService.open(data).then(function(result) {
+    var decryptedData = cryptutil.decrypted(data)
+    AddAdbKeyModalService.open(decryptedData).then(function(result) {
       if (result) {
-        UserService.acceptAdbKey(data)
+        UserService.acceptAdbKey(decryptedData)
       }
     })
   })
