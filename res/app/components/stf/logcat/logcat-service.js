@@ -1,6 +1,8 @@
 var _ = require('lodash')
 var _s = require('underscore.string')
 
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
+
 module.exports = function LogcatServiceFactory(socket, FilterStringService) {
   var service = {}
   service.started = false
@@ -91,12 +93,13 @@ module.exports = function LogcatServiceFactory(socket, FilterStringService) {
   }
 
   socket.on('logcat.entry', function(rawData) {
+    var decryptedData = cryptutil.decryptedData(rawData)
     service.numberOfEntries++
-    service.entries.push(enhanceEntry(rawData))
+    service.entries.push(enhanceEntry(decryptedData))
 
     if (typeof (service.addEntryListener) === 'function') {
-      if (filterLine(rawData)) {
-        service.addEntryListener(rawData)
+      if (filterLine(decryptedData)) {
+        service.addEntryListener(decryptedData)
       }
     }
   })

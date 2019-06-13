@@ -1,5 +1,7 @@
 var _ = require('lodash')
 
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
+
 module.exports = function SettingsServiceFactory(
   $rootScope
 , UserService
@@ -40,7 +42,7 @@ module.exports = function SettingsServiceFactory(
   }
 
   SettingsService.update = function(delta) {
-    socket.emit('user.settings.update', delta)
+    socket.emit('user.settings.update', cryptutil.encrypt(delta))
     applyDelta(delta)
   }
 

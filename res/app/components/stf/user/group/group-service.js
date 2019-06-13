@@ -1,5 +1,7 @@
 var Promise = require('bluebird')
 
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
+
 module.exports = function GroupServiceFactory(
   socket
 , TransactionService
@@ -14,14 +16,14 @@ module.exports = function GroupServiceFactory(
     }
 
     var tx = TransactionService.create(device)
-    socket.emit('group.invite', device.channel, tx.channel, {
+    socket.emit('group.invite', device.channel, tx.channel, cryptutil.encrypt({
       requirements: {
         serial: {
           value: device.serial
         , match: 'exact'
         }
       }
-    })
+    }))
     return tx.promise
       .then(function(result) {
         return result.device
@@ -37,22 +39,22 @@ module.exports = function GroupServiceFactory(
     }
 
     var tx = TransactionService.create(device)
-    socket.emit('logcat.stop', device.channel, tx.channel, {
+    socket.emit('logcat.stop', device.channel, tx.channel, cryptutil.encrypt({
       requirements: {
         serial: {
           value: device.serial,
           match: 'exact'
         }
       }
-    });
-    socket.emit('group.kick', device.channel, tx.channel, {
+    }));
+    socket.emit('group.kick', device.channel, tx.channel, cryptutil.encrypt({
       requirements: {
         serial: {
           value: device.serial
         , match: 'exact'
         }
       }
-    })
+    }))
     return tx.promise
       .then(function(result) {
         return result.device

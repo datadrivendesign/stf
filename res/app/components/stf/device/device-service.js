@@ -226,10 +226,10 @@ module.exports = function DeviceServiceFactory($http, $cookies, socket,
   }
 
   deviceService.updateNote = function(serial, note) {
-    socket.emit('device.note', {
+    socket.emit('device.note',  cryptutil.encrypt({
       serial: serial,
       note: note
-    })
+    }))
   }
 
   return deviceService

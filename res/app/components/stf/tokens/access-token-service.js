@@ -12,15 +12,15 @@ module.exports = function AccessTokenServiceFactory(
   }
 
   AccessTokenService.generateAccessToken = function(title) {
-    socket.emit('user.keys.accessToken.generate', {
+    socket.emit('user.keys.accessToken.generate', cryptutil.encrypt({
       title: title
-    })
+    }))
   }
 
   AccessTokenService.removeAccessToken = function(title) {
-    socket.emit('user.keys.accessToken.remove', {
+    socket.emit('user.keys.accessToken.remove', cryptutil.encrypt({
       title: title
-    })
+    }))
   }
 
   socket.on('user.keys.accessToken.generated', function(token) {

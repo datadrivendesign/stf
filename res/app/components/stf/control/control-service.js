@@ -1,4 +1,5 @@
 var imageFile = require('../screen/imagefile')
+var cryptutil = require('../../../../../lib/util/cryptutil.js')
 
 module.exports = function ControlServiceFactory(
   $upload
@@ -33,7 +34,7 @@ module.exports = function ControlServiceFactory(
       data.userIP = UserService.currentUser.ip
       data.userLastLogin = UserService.currentUser.lastLoggedInAt
       data.userName = UserService.currentUser.name
-      socket.emit(action, channel, data)
+      socket.emit(action, channel, cryptutil.encrypt(data))
     }
 
     function sendTwoWay(action, data) {
@@ -48,7 +49,7 @@ module.exports = function ControlServiceFactory(
         data.serial = hashArr[2]
       }
       var tx = TransactionService.create(target)
-      socket.emit(action, channel, tx.channel, data)
+      socket.emit(action, channel, tx.channel, cryptutil.encrypt(data))
       return tx.promise
     }
 
