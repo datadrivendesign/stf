@@ -1,4 +1,4 @@
-var cryptutil = require('../../../../../lib/util/cryptutil.js')
+var cryptutil = require('../../../lib/util/cryptutil.js')
 
 module.exports =
   function ControlPanesController($scope, $http, gettext, $routeParams,

@@ -1,6 +1,6 @@
 var Promise = require('bluebird')
 
-var cryptutil = require('../../../../../lib/util/cryptutil.js')
+var cryptutil = require('../../../../../../lib/util/cryptutil.js')
 
 module.exports = function GroupServiceFactory(
   socket
