@@ -8,7 +8,9 @@ module.exports = function SocketFactory(
   var websocketUrl = AppState.config.websocketUrl || ''
 
   var socket = io(websocketUrl, {
-    reconnection: false, transports: ['websocket']
+    reconnection: false,
+    transports: ['websocket'],
+    secure: true
   })
 
   socket.setWSId = function(wsId){
