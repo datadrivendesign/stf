@@ -15,6 +15,14 @@ div(ng-controller='CrowdFeedbackCtrl').fill-height
           span.light-text
             |  {{ minutes }} minutes, {{ seconds }} seconds
 
+      //- Toggle Recording
+      div.crowd-ui-section
+        div.crowd-ui-section-title
+          | Recording is {{ recordInput ? 'ON' : 'OFF' }}
+        div.crowd-ui-section-input
+          button.record(ng-click="toggleRecordInput()")
+            | {{ recordInput ? 'Stop' : 'Start' }}
+
       //- Task
       div.crowd-ui-section(ng-if="hasTask")
         div.crowd-ui-section-title Your Task
