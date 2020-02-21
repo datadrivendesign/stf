@@ -61,7 +61,7 @@ module.exports = function($scope, $sce, $interval, $timeout, CrowdFeedbackServic
       $scope.descIsQuestion = token.task.descriptionIsQuestion
       $scope.submissionInstructionalText =
         $scope.descIsQuestion ?
-          'Please enter your answer below (or "N/A" if you don\'t know the answer) and click Submit:' :
+          'Please enter your answer below and click Submit:' :
           'Please click Submit when you are finished.'
     }
 

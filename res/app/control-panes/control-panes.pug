@@ -46,18 +46,18 @@ div(ng-controller='CrowdFeedbackCtrl').fill-height
               i.fa.fa-comment.color-yellow
               span(translate='translate')
                 span Guide
-          li(ng-class="{ active: activeSection === 'EMAIL' }")
-            a(href="javascript:void(0)" ng-click="activeSection = 'EMAIL'")
-              i.fa.fa-envelope.color-red
-              span(translate='translate')
-                span Email
-                span(ng-show="countUnreadEmails()") &nbsp;({{ countUnreadEmails() }})
-          li(ng-class="{ active: activeSection === 'SMS' }")
-            a(ng-click="activeSection = 'SMS'")
-              i.fa.fa-phone.color-green
-              span(translate='translate')
-                span SMS
-                span(ng-show="countUnreadSms()") &nbsp;({{ countUnreadSms() }})
+          //- li(ng-class="{ active: activeSection === 'EMAIL' }")
+          //-   a(href="javascript:void(0)" ng-click="activeSection = 'EMAIL'")
+          //-     i.fa.fa-envelope.color-red
+          //-     span(translate='translate')
+          //-       span Email
+          //-       span(ng-show="countUnreadEmails()") &nbsp;({{ countUnreadEmails() }})
+          //- li(ng-class="{ active: activeSection === 'SMS' }")
+          //-   a(ng-click="activeSection = 'SMS'")
+          //-     i.fa.fa-phone.color-green
+          //-     span(translate='translate')
+          //-       span SMS
+          //-       span(ng-show="countUnreadSms()") &nbsp;({{ countUnreadSms() }})
 
         .crowd-ui-section-tab-content
           div(ng-show="activeSection === 'GUIDE'")
@@ -95,8 +95,8 @@ div(ng-controller='CrowdFeedbackCtrl').fill-height
                   b Date of Birth:
                   |  {{ loginInfo.accountInfo.birthday }}
             div.crowd-ui-section-tab-text
-              | For verification email or SMS, check the Email and SMS tabs on the top right.
-              br
+              //- | For verification email or SMS, check the Email and SMS tabs on the top right.
+              //- br
               | Use your computer keyboard to enter text. Avoid the Android keyboard as much as possible.
             div.crowd-ui-section-tab-text
               | If the app does not launch (or stops responding to your clicks), refresh the page and wait 10-15 seconds. Try this three times and if it still doesn't show an app, please click Submit and send us an email.
@@ -106,5 +106,5 @@ div(ng-controller='CrowdFeedbackCtrl').fill-height
               | if you encounter any errors or have any questions.
             div.crowd-ui-section-tab-text.color-red
               | No matter what happens, do not enter your personal details (email, phone number, location etc.)
-          div(ng-show="activeSection === 'EMAIL'" ng-include="'control-panes/messages/email.pug'")
-          div(ng-show="activeSection === 'SMS'" ng-include="'control-panes/messages/sms.pug'")
+          //- div(ng-show="activeSection === 'EMAIL'" ng-include="'control-panes/messages/email.pug'")
+          //- div(ng-show="activeSection === 'SMS'" ng-include="'control-panes/messages/sms.pug'")

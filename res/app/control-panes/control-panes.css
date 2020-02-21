@@ -58,6 +58,7 @@
   font-weight: 400;
   font-size: 16px;
   margin-top: 1em;
+  white-space: pre-wrap;
 }
 
 .crowd-ui-section-input {
