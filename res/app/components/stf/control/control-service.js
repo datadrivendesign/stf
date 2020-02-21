@@ -16,7 +16,7 @@ module.exports = function ControlServiceFactory(
 
   function ControlService(target, channel) {
     var allowInput = true
-    var recordInput = false
+    // var recordInput = false
 
     function sendOneWay(action, data) {
       if (!allowInput) {
@@ -34,7 +34,7 @@ module.exports = function ControlServiceFactory(
       data.userIP = UserService.currentUser.ip
       data.userLastLogin = UserService.currentUser.lastLoggedInAt
       data.userName = UserService.currentUser.name
-      data.record = recordInput
+      // data.record = recordInput
       socket.emit(action, channel, data)
     }
 
@@ -50,7 +50,7 @@ module.exports = function ControlServiceFactory(
         data.serial = hashArr[2]
       }
       var tx = TransactionService.create(target)
-      data.record = recordInput
+      // data.record = recordInput
       socket.emit(action, channel, tx.channel, data)
       return tx.promise
     }
@@ -363,9 +363,9 @@ module.exports = function ControlServiceFactory(
       allowInput = newAllowInput
     }
 
-    this.toggleRecordInput = function() {
-      recordInput = !recordInput
-    }
+    // this.toggleRecordInput = function() {
+    //   recordInput = !recordInput
+    // }
 
     this.recordLastVH = function(start, stop) {
       this.gestureStartAction(start, 'submission')

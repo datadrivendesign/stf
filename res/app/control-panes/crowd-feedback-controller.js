@@ -12,12 +12,12 @@ module.exports = function($scope, $sce, $interval, $timeout, CrowdFeedbackServic
   $scope.loginInfo = window.stfConfig.loginInfo[serial] || {}
   $scope.contactEmail = window.stfConfig.contactEmail
   $scope.showSpinner = false
-  $scope.recordInput = false
+  // $scope.recordInput = false
 
-  $scope.toggleRecordInput = function() {
-    $scope.recordInput = !$scope.recordInput
-    $scope.control.toggleRecordInput()
-  }
+  // $scope.toggleRecordInput = function() {
+  //   $scope.recordInput = !$scope.recordInput
+  //   $scope.control.toggleRecordInput()
+  // }
 
   $scope.submitAnswer = function(taskAnswer) {
     if ($scope.submittingAnswer) {
