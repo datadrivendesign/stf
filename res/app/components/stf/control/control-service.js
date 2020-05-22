@@ -16,7 +16,7 @@ module.exports = function ControlServiceFactory(
 
   function ControlService(target, channel) {
     var allowInput = true
-    // var recordInput = false
+    var recordInput = false
 
     function sendOneWay(action, data) {
       if (!allowInput) {
