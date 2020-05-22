@@ -26,6 +26,10 @@ html
       if !submittedTask
         div.row
           h3
+            = 'TASK: '
+            = task.taskName
+        div.row
+          h3
             = 'Please answer the following questions:'
         div.row
           form(action=`/app/api/v1/noauth/responses/${token}`, method="post")
